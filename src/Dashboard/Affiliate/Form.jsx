@@ -4,6 +4,7 @@ import { useState, useEffect } from "react"
 import { ArrowRight } from "lucide-react"
 import AffiliateDeatils from "./AffiliateDetails";
 import { useNavigate } from "react-router-dom";
+import envConfig from "../../utils/envConfig";
 
 const Form = () => {
 const navigate = useNavigate();
@@ -31,7 +32,7 @@ const [formData, setFormData] = useState({
           navigate('/login');
           return;
         }
-        const response = await fetch('https://arambhskills-zxut.onrender.com/user/get_user', {
+        const response = await fetch(`${envConfig.backendUrl}/user/get_user`, {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',
@@ -100,7 +101,7 @@ const [formData, setFormData] = useState({
         return;
       }
       console.log('Submitting with token:', token); // Log token
-      const response = await fetch('https://arambhskills-zxut.onrender.com/user/submit_affiliate/', {
+      const response = await fetch(`${envConfig.backendUrl}/user/submit_affiliate/`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

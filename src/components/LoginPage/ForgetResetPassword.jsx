@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import Nav from '../Common/Nav';
 import Bannertemp from '../AboutPage/Bannertemp';
 import { useNavigate } from 'react-router-dom';
+import envConfig from '../../utils/envConfig';
 
 export default function ForgetResetPassword() {
   const [formData, setFormData] = useState({
@@ -104,7 +105,7 @@ export default function ForgetResetPassword() {
     setLoading(true);
     try {
     
-      const response = await fetch('https://arambhskills-zxut.onrender.com/user/reset_password', {
+      const response = await fetch(`${envConfig.backendUrl}/user/reset_password`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

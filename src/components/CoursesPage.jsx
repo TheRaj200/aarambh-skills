@@ -12,6 +12,7 @@ import { Link, useLocation } from "react-router-dom";
 import { useDispatch, useSelector } from 'react-redux';
 import { increment } from './redux/cartSlice';
 import { addToWishlist, removeFromWishlist } from './redux/wishlistSlice';
+import envConfig from "../utils/envConfig";
 
 const Notification = ({ message, type }) => (
   <div
@@ -56,7 +57,7 @@ function CoursesPage() {
   useEffect(() => {
     const fetchCourses = async () => {
       try {
-        const response = await fetch('https://arambhskills-zxut.onrender.com/courses/get/');
+        const response = await fetch(`${envConfig.backendUrl}/courses/get/`);
         const data = await response.json();
         
         if (data.status) {
@@ -104,7 +105,7 @@ function CoursesPage() {
     }
 
     try {
-      const response = await fetch(`https://arambhskills-zxut.onrender.com/courses/like/${courseId}/`, {
+      const response = await fetch(`${envConfig.backendUrl}/courses/like/${courseId}/`, {
         method: 'PUT',
         headers: {
           'Authorization': `Bearer ${token}`,

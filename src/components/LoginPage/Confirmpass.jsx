@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import Nav from '../Common/Nav';
 import Bannertemp from '../AboutPage/Bannertemp';
 import { useNavigate, useLocation } from 'react-router-dom';
+import envConfig from '../../utils/envConfig';
 
 export default function Confirmpass() {
   const location = useLocation();
@@ -118,7 +119,7 @@ export default function Confirmpass() {
 
     try {
       // Construct URL with affiliate_id query parameter
-      const baseUrl = 'https://arambhskills-zxut.onrender.com/auth/register';
+      const baseUrl = `${envConfig.backendUrl}/auth/register`;
       const url = affiliateId ? `${baseUrl}?affiliate_id=${affiliateId}` : baseUrl;
    
 

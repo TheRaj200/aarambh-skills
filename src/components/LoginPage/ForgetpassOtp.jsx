@@ -3,6 +3,7 @@ import Nav from "../Common/Nav";
 import Bannertemp from "../AboutPage/Bannertemp";
 import { FaEdit, FaExclamationCircle } from "react-icons/fa";
 import { useNavigate, useLocation, useSearchParams } from "react-router-dom";
+import envConfig from "../../utils/envConfig";
 
 export default function ForgetpassOtp() {
   const [otp, setOtp] = useState(["", "", "", ""]);
@@ -78,7 +79,7 @@ export default function ForgetpassOtp() {
     }
 
     try {
-      const response = await fetch("https://arambhskills-zxut.onrender.com/auth/verify_otp/", {
+      const response = await fetch(`${envConfig.backendUrl}/auth/verify_otp/`, {
         method: "POST",
         headers: { 
           "Content-Type": "application/json",
@@ -128,7 +129,7 @@ export default function ForgetpassOtp() {
 
     try {
       setLoading(true);
-      const response = await fetch("https://arambhskills-zxut.onrender.com/auth/resend_otp/", {
+      const response = await fetch(`${envConfig.backendUrl}/auth/resend_otp/`, {
         method: "POST",
         headers: { 
           "Content-Type": "application/json",

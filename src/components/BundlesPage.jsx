@@ -7,6 +7,7 @@ import { GoDotFill } from "react-icons/go";
 import FAQ from './homePage/FAQ';
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import Contact from "./BundlesPage/Contact";
+import envConfig from "../utils/envConfig";
 
 function BundlesPage() {
   const navigate = useNavigate();
@@ -18,7 +19,7 @@ function BundlesPage() {
   useEffect(() => {
     const fetchBundles = async () => {
       try {
-        const response = await fetch("https://arambhskills-zxut.onrender.com/courses/get_bundles/");
+        const response = await fetch(`${envConfig.backendUrl}/courses/get_bundles/`);
         if (!response.ok) {
           throw new Error('Failed to fetch bundles');
         }
@@ -62,7 +63,7 @@ function BundlesPage() {
 
       console.log('Sending bundle data to API:', requestBody);
 
-      const response = await fetch('https://arambhskills-zxut.onrender.com/cart/add_to_cart/', {
+      const response = await fetch(`${envConfig.backendUrl}/cart/add_to_cart/`, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${token}`,

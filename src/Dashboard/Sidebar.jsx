@@ -9,6 +9,7 @@ import { PiCertificateFill } from "react-icons/pi";
 import { RiShareForwardBoxLine } from "react-icons/ri";
 import { useNavigate, useLocation } from "react-router-dom";
 import { IoMenu, IoClose } from "react-icons/io5";
+import envConfig from "../utils/envConfig";
 
 const Sidebar = ({ col }) => {
   const [user, setUser] = useState(null);
@@ -19,7 +20,7 @@ const Sidebar = ({ col }) => {
   useEffect(() => {
     const fetchUserData = async () => {
       try {
-        const response = await fetch('https://arambhskills-zxut.onrender.com/user/get_user', {
+        const response = await fetch(`${envConfig.backendUrl}/user/get_user`, {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',

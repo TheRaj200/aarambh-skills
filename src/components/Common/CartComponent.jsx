@@ -3,6 +3,7 @@ import { RiDeleteBin5Fill } from 'react-icons/ri';
 import { useDispatch } from 'react-redux';
 import { decrement } from '../redux/cartSlice';
 import { Link } from 'react-router-dom';
+import envConfig from '../../utils/envConfig';
 
 const CartComponent = () => {
   const [couponCode, setCouponCode] = useState('');
@@ -21,7 +22,7 @@ const CartComponent = () => {
         return;
       }
 
-      const response = await fetch('https://arambhskills-zxut.onrender.com/cart/', {
+      const response = await fetch(`${envConfig.backendUrl}/cart/`, {
         headers: {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json'
@@ -79,7 +80,7 @@ const CartComponent = () => {
         return;
       }
 
-      const response = await fetch(`https://arambhskills-zxut.onrender.com/cart/delete/${cartId}/`, {
+      const response = await fetch(`${envConfig.backendUrl}/cart/delete/${cartId}/`, {
         method: 'PUT',
         headers: {
           'Authorization': `Bearer ${token}`

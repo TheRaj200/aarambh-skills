@@ -7,6 +7,7 @@ import { removeFromWishlist } from '../../components/redux/wishlistSlice';
 import { FaRegCirclePlay } from 'react-icons/fa6';
 import { IoMdCheckmarkCircle } from "react-icons/io";
 import { MdError } from "react-icons/md";
+import envConfig from '../../utils/envConfig';
 
 const Notification = ({ message, type }) => (
   <div
@@ -53,7 +54,7 @@ const Content = () => {
                     return;
                 }
 
-                const response = await fetch('https://arambhskills-zxut.onrender.com/courses/wishlist/', {
+                const response = await fetch(`${envConfig.backendUrl}/courses/wishlist/`, {
                     headers: {
                         'Authorization': `Bearer ${token}`,
                         'Content-Type': 'application/json'
@@ -86,7 +87,7 @@ const Content = () => {
                 return;
             }
 
-            const response = await fetch(`https://arambhskills-zxut.onrender.com/courses/like/${course.course}/`, {
+            const response = await fetch(`${envConfig.backendUrl}/courses/like/${course.course}/`, {
                 method: 'PUT',
                 headers: {
                     'Authorization': `Bearer ${token}`,

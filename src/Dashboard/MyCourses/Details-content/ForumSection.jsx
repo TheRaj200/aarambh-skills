@@ -63,7 +63,7 @@ function ForumSection() {
   const fetchPosts = async () => {
     try {
       setLoading(true)
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/forum/posts`)
+      const response = await fetch(`${process.env.VITE_API_URL}/api/forum/posts`)
       if (!response.ok) {
         throw new Error('Failed to fetch posts')
       }
@@ -81,7 +81,7 @@ function ForumSection() {
   const handleLike = async (postId) => {
     if (USE_API) {
       try {
-        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/forum/posts/${postId}/like`, {
+        const response = await fetch(`${process.env.VITE_API_URL}/api/forum/posts/${postId}/like`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json'
@@ -142,7 +142,7 @@ function ForumSection() {
         }
 
         const response = await fetch(
-          `${process.env.NEXT_PUBLIC_API_URL}/api/forum/posts/${postId}/replies`,
+          `${process.env.VITE_API_URL}/api/forum/posts/${postId}/replies`,
           {
             method: 'POST',
             headers: {
@@ -205,7 +205,7 @@ function ForumSection() {
 
     if (USE_API) {
       try {
-        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/forum/posts`, {
+        const response = await fetch(`${process.env.VITE_API_URL}/api/forum/posts`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json'

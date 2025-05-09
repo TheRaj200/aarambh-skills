@@ -1,5 +1,6 @@
 import { useNavigate } from "react-router-dom"
 import { useState, useEffect } from "react"
+import envConfig from "../../utils/envConfig"
 
 function TopicTags() {
   const navigate = useNavigate()
@@ -17,7 +18,7 @@ function TopicTags() {
           return
         }
 
-        const response = await fetch('https://arambhskills-zxut.onrender.com/prepare/get_topics/', {
+        const response = await fetch(`${envConfig.backendUrl}/prepare/get_topics/`, {
           method: 'GET',
           headers: {
             'Authorization': `Bearer ${token}`,

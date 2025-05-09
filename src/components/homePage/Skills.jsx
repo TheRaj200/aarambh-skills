@@ -6,6 +6,7 @@ import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useDispatch, useSelector } from 'react-redux';
 import { increment } from '../redux/cartSlice';
 import { addToWishlist, removeFromWishlist } from '../redux/wishlistSlice';
+import envConfig from "../../utils/envConfig";
 
 export default function Skills({ skill }) {
   const [courses, setCourses] = useState([]);
@@ -19,7 +20,7 @@ export default function Skills({ skill }) {
   useEffect(() => {
     const fetchCourses = async () => {
       try {
-        const response = await fetch("https://arambhskills-zxut.onrender.com/courses/get/");
+        const response = await fetch(`${envConfig.backendUrl}/courses/get/`);
         if (!response.ok) {
           throw new Error('Failed to fetch courses');
         }

@@ -5,6 +5,7 @@ import { IoSettingsSharp, IoTriangle } from 'react-icons/io5';
 import { useNavigate } from 'react-router-dom';
 import { RiShareForwardBoxLine } from "react-icons/ri";
 import { useSelector } from 'react-redux';
+import envConfig from '../../utils/envConfig';
 
 const Nav = ({ cours, about, bundle }) => {
   const [showDropdown, setShowDropdown] = useState(false);
@@ -19,7 +20,7 @@ const Nav = ({ cours, about, bundle }) => {
   useEffect(() => {
     const fetchUserData = async () => {
       try {
-        const response = await fetch('https://arambhskills-zxut.onrender.com/user/get_user', {
+        const response = await fetch(`${envConfig.backendUrl}/user/get_user'`, {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',

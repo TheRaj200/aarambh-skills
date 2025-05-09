@@ -2,6 +2,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import Bannertemp from "../AboutPage/Bannertemp";
 import Nav from "./Nav";
+import envConfig from "../../utils/envConfig";
 
 const QuizPage = () => {
   const { topicName } = useParams();
@@ -27,7 +28,7 @@ const QuizPage = () => {
         }
 
         const response = await fetch(
-          `https://arambhskills-zxut.onrender.com/prepare/quiz/${topicName}`,
+          `${envConfig.backendUrl}/prepare/quiz/${topicName}`,
           {
             method: "GET",
             headers: {
@@ -115,7 +116,7 @@ const QuizPage = () => {
       }
 
       const response = await fetch(
-        "https://arambhskills-zxut.onrender.com/prepare/submit_answer/",
+        `${envConfig.backendUrl}/prepare/submit_answer/`,
         {
           method: "POST",
           headers: {

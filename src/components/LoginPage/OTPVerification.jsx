@@ -56,7 +56,7 @@ export default function OTPVerification({ phoneNumber = "", onVerify = () => {},
 
   const handleResendOTP = async () => {
     try {
-      const response = await fetch("https://arambhskills-zxut.onrender.com/api/auth/request-otp", {
+      const response = await fetch(`${envConfig.backendUrl}/api/auth/request-otp`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ phone: phoneNumber }),

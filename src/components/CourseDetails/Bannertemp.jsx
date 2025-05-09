@@ -5,6 +5,7 @@ import { GiCheckMark } from "react-icons/gi";
 import { ImCross } from "react-icons/im";
 import { MdAccessTimeFilled } from "react-icons/md";
 import { Link, useParams } from "react-router-dom";
+import envConfig from "../../utils/envConfig";
 
 function Bannertemp() {
   const [activeTab, setActiveTab] = useState("curriculum");
@@ -16,7 +17,7 @@ function Bannertemp() {
   useEffect(() => {
     const fetchCourseData = async () => {
       try {
-        const response = await fetch('https://arambhskills-zxut.onrender.com/courses/get/');
+        const response = await fetch(`${envConfig.backendUrl}/courses/get/`);
         const data = await response.json();
         
         if (data.status) {
@@ -103,7 +104,7 @@ function Bannertemp() {
 
       
 
-      const response = await fetch('https://arambhskills-zxut.onrender.com/cart/add_to_cart/', {
+      const response = await fetch(`${envConfig.backendUrl}/cart/add_to_cart/`, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${token}`,

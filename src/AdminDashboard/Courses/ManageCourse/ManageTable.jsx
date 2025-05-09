@@ -22,7 +22,6 @@ const ManageTable = () => {
     const fetchCourse = async () => {
       try {
         const token = authToken
-        console.log("Backend url is ", envConfig.backendUrl)
         const response = await axios.get(`${envConfig.backendUrl}/courses/admin/get_course`, {
           headers: {
             "Authorization": `Bearer ${token}`

@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import Nav from '../Common/Nav';
 import Bannertemp from '../AboutPage/Bannertemp';
 import { useNavigate } from 'react-router-dom';
+import envConfig from '../../utils/envConfig';
 
 export default function Login() {
   const [formData, setFormData] = useState({
@@ -29,7 +30,7 @@ export default function Login() {
     setLoading(true);
 
     try {
-      const response = await fetch('https://arambhskills-zxut.onrender.com/auth/login', {
+      const response = await fetch(`${envConfig.backendUrl}/auth/login`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'

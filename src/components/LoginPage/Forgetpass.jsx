@@ -2,6 +2,7 @@ import { useState } from "react";
 import Nav from "../Common/Nav";
 import Bannertemp from "../AboutPage/Bannertemp";
 import { useNavigate } from "react-router-dom";
+import envConfig from "../../utils/envConfig";
 
 export default function Forgetpass() {
   const [email, setEmail] = useState("");
@@ -22,7 +23,7 @@ export default function Forgetpass() {
 
     try {
       setLoading(true);
-      const response = await fetch("https://arambhskills-zxut.onrender.com/auth/send_otp", {
+      const response = await fetch(`${envConfig.backendUrl}/auth/send_otp`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email }),
