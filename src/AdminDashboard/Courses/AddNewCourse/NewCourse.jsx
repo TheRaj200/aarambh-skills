@@ -1,11 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
+import { authToken } from '../../../utils/constants';
+import axios from 'axios';
+import envConfig from '../../../utils/envConfig';
 
 const NewCourse = () => {
   const [formData, setFormData] = useState({
     title: '',
-    shortDescription: '',
+    short_description: '',
     description: '',
     category: '',
     courseLevel: '',
@@ -16,30 +19,40 @@ const NewCourse = () => {
     discountedPrice: '',
     expiryPeriod: 'lifetime',
     dripContent: 'off',
-    thumbnail: null,
-    status: 'draft'
+    image_file: null,
+    status: 'draft',
+    people_enrolled: 0,
   });
+
+  console.log(formData)
 
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
-  // Fetch categories on component mount
-  useEffect(() => {
-    fetchCategories();
-  }, []);
 
-  const fetchCategories = async () => {
-    try {
-      const response = await fetch('https://arambhskills.onrender.com/courses/get_categories/');
-      const data = await response.json();
-      if (data.status) {
-        setCategories(data.categories);
+  useEffect(() => {
+    const fetchCatagories = async () => {
+      try {
+        const response = await axios.get(`${envConfig.backendUrl}/courses/admin/get_category`, {
+          headers: {
+            Authorization: `Bearer ${authToken}`
+          }
+        })
+        const responseData = response.data.data
+        setCategories(responseData)
+        console.log("Response is >>>> ", responseData)
+      } catch (error) {
+        console.log("Error while fetching categories", error)
       }
-    } catch (error) {
-      console.error('Error fetching categories:', error);
     }
-  };
+    fetchCatagories()
+  }, [])
+
+  console
+
+
+
 
   const handleInputChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -56,11 +69,11 @@ const NewCourse = () => {
     }));
   };
 
-  const handleThumbnailChange = (e) => {
+  const handleimage_fileChange = (e) => {
     const file = e.target.files[0];
     setFormData(prev => ({
       ...prev,
-      thumbnail: file
+      image_file: file
     }));
   };
 
@@ -72,14 +85,14 @@ const NewCourse = () => {
     try {
       const formDataToSend = new FormData();
       Object.keys(formData).forEach(key => {
-        if (key === 'thumbnail' && formData[key]) {
-          formDataToSend.append('thumbnail', formData[key]);
+        if (key === 'image_file' && formData[key]) {
+          formDataToSend.append('image_file', formData[key]);
         } else {
           formDataToSend.append(key, formData[key]);
         }
       });
 
-      const response = await fetch('https://arambhskills.onrender.com/courses/create_course/', {
+      const response = await fetch(`${envConfig.backendUrl}/courses/admin/create_course`, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('token')}`
@@ -133,8 +146,8 @@ const NewCourse = () => {
                 Short Description
               </label>
               <textarea
-                name="shortDescription"
-                value={formData.shortDescription}
+                name="short_description"
+                value={formData.short_description}
                 onChange={handleInputChange}
                 placeholder="Enter Short Description"
                 rows="3"
@@ -350,10 +363,10 @@ const NewCourse = () => {
               </div>
             </div>
 
-            {/* Thumbnail */}
+            {/* image_file */}
             <div>
               <label className="block text-sm font-medium mb-1 text-gray-700">
-                Thumbnail
+                image_file
               </label>
               <div className="flex items-center justify-center w-full">
                 <label className="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100">
@@ -367,7 +380,7 @@ const NewCourse = () => {
                   <input
                     type="file"
                     accept="image/*"
-                    onChange={handleThumbnailChange}
+                    onChange={handleimage_fileChange}
                     className="hidden"
                   />
                 </label>

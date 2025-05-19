@@ -5,6 +5,7 @@ import { FaSliders } from "react-icons/fa6";
 import axios from "axios";
 import envConfig from "../../utils/envConfig";
 import { authToken } from "../../utils/constants";
+import toast from "react-hot-toast";
 
 const Category = [
   {
@@ -131,11 +132,11 @@ const CategoryCard = ({
       <div className="absolute bottom-0 left-0 right-0 p-4 bg-white border-t border-gray-100">
         <div className="flex justify-center gap-4">
           <button
-            onClick={onAdd}
+            // onClick={onAdd}
             className="flex items-center gap-2 px-4 py-2 text-[#020A47] hover:bg-[#020A47]/5 rounded-lg transition-colors duration-200"
           >
             <GoPlus className="text-xl" />
-            <span className="font-medium">Add</span>
+            <span className="font-medium">Edit</span>
           </button>
           <button
             onClick={onDelete}
@@ -365,9 +366,32 @@ const CategoryList = () => {
     fetchCatagories()
   }, [])
 
-  const Deletecategory = (index) => {
-    const upd = categories.filter((_, i) => i !== index);
-    setCategories(upd);
+  const Deletecategory = async (index) => {
+    const upd = categories[index]?.id
+    if (!upd) {
+      toast.error("Please select a category to delete")
+      return
+    }
+    console.log(upd)
+    try {
+      console.log(authToken, upd)
+      const response = await axios.patch(`${envConfig.backendUrl}/courses/admin/delete_category/${upd}`, {}, {
+        headers: {
+          Authorization: `Bearer ${authToken}`
+        }
+      })
+      const responseData = response.data
+      if (responseData.status) {
+        const upd = categories.filter((_, i) => i !== index);
+        setCategories(upd)
+        toast.success("Category deleted successfully")
+      } else {
+        toast.error(responseData.message)
+      }
+    } catch (error) {
+      console.log("Error while deleting category", error)
+    }
+    // setCategories(upd);
   };
 
   return (

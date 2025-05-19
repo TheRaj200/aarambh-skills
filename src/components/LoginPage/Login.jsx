@@ -44,19 +44,14 @@ export default function Login() {
         setSuccess(data.message);
         // Store token and user data in localStorage
         localStorage.setItem('token', data.token);
-        localStorage.setItem('user', JSON.stringify({
-          id: data.user.id,
-          name: data.user.username,
-          email: data.user.email,
-          isActive: data.user.is_active,
-          dateJoined: data.user.date_joined,
-          loginMethod: data.user.login_method,
-          score: data.user.score
-        }));
-        // Add a small delay to show the success message
-        setTimeout(() => {
-          navigate('/practice');
-        }, 1000);
+        console.log(data.user);
+        localStorage.setItem('user', JSON.stringify(data.user));
+        if (data.user?.is_superuser) {
+          setTimeout(() => {
+            navigate('/admin/dashboard');
+          }, 1000);
+        }
+
       } else {
         setError(data.message || 'Something went wrong. Please try again.');
       }
@@ -113,7 +108,7 @@ export default function Login() {
                   required
                 />
               </div>
-              <h2 onClick={()=> navigate("/forget-password")} className='ml-2 text-sm cursor-pointer text-gray-600 hover:text-gray-800'>Forgot Password ?</h2>
+              <h2 onClick={() => navigate("/forget-password")} className='ml-2 text-sm cursor-pointer text-gray-600 hover:text-gray-800'>Forgot Password ?</h2>
 
               <div>
                 <button
