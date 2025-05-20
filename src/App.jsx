@@ -41,6 +41,12 @@ import AddQuiz from './AdminDashboard/Courses/AddNewQuiz/AddQuiz.jsx'
 import AddProject from './AdminDashboard/Courses/AddNewProject/AddProject.jsx';
 import AddNewVideo from './AdminDashboard/Courses/AddNewVideo/AddNewVideo.jsx';
 import EditCourse from './AdminDashboard/Courses/ManageCourse/EditCourse/EditCourse.jsx';
+import Students from './AdminDashboard/Students/Students.jsx';
+import AddStudent from './AdminDashboard/Students/addStudent.jsx';
+import EditStudent from './AdminDashboard/Students/EditStudent.jsx';
+import CourseBundle from './AdminDashboard/CourseBundle/CourseBundle.jsx';
+import AddBundle from './AdminDashboard/CourseBundle/AddBundle.jsx';
+import PaymentHistory from './AdminDashboard/PaymentHistory/PaymentHistory.jsx';
 
 const App = () => {
   const [cartCount, setCartCount] = useState(0);
@@ -102,6 +108,11 @@ const App = () => {
             <Route path="/admin/dashboard/project/add" element={<AddProject />} />
             <Route path="/admin/dashboard/video/add" element={<AddNewVideo />} />
             <Route path="/admin/dashboard/courseedit" element={<EditCourse />} />
+            <Route path="/admin/dashboard/students" element={<Students />} />
+            <Route path="/admin/dashboard/students/add" element={<AddStudent />} />
+            <Route path="/admin/dashboard/students/Edit" element={<EditStudent />} />
+            <Route path="/admin/dashboard/bundle" element={<AddBundle />} />
+            <Route path="/admin/dashboard/paymenthistory" element={<PaymentHistory />} />
 
           </Routes>
 
