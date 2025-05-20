@@ -42,14 +42,10 @@ import AddProject from './AdminDashboard/Courses/AddNewProject/AddProject.jsx';
 import AddNewVideo from './AdminDashboard/Courses/AddNewVideo/AddNewVideo.jsx';
 import EditCourse from './AdminDashboard/Courses/ManageCourse/EditCourse/EditCourse.jsx';
 import Students from './AdminDashboard/Students/Students.jsx';
-import AddStudent from './AdminDashboard/Students/addStudent.jsx';
+import AddStudent from './AdminDashboard/Students/AddStudent.jsx';
 import EditStudent from './AdminDashboard/Students/EditStudent.jsx';
-import CourseBundle from './AdminDashboard/CourseBundle/CourseBundle.jsx';
 import AddBundle from './AdminDashboard/CourseBundle/AddBundle.jsx';
-import PaymentHistory from './AdminDashboard/PaymentHistory/PaymentHistory.jsx';
-import ManageLetters from './AdminDashboard/NewsLetter/ManageLetters.jsx';
 import NewsLetter from './AdminDashboard/NewsLetter/NewsLetter.jsx';
-import PayemnetPage from './AdminDashboard/PaymentHistory/PaymentPage.jsx';
 import PaymentPage from './AdminDashboard/PaymentHistory/PaymentPage.jsx';
 
 const App = () => {
