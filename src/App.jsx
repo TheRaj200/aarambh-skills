@@ -47,6 +47,10 @@ import EditStudent from './AdminDashboard/Students/EditStudent.jsx';
 import CourseBundle from './AdminDashboard/CourseBundle/CourseBundle.jsx';
 import AddBundle from './AdminDashboard/CourseBundle/AddBundle.jsx';
 import PaymentHistory from './AdminDashboard/PaymentHistory/PaymentHistory.jsx';
+import ManageLetters from './AdminDashboard/NewsLetter/ManageLetters.jsx';
+import NewsLetter from './AdminDashboard/NewsLetter/NewsLetter.jsx';
+import PayemnetPage from './AdminDashboard/PaymentHistory/PaymentPage.jsx';
+import PaymentPage from './AdminDashboard/PaymentHistory/PaymentPage.jsx';
 
 const App = () => {
   const [cartCount, setCartCount] = useState(0);
@@ -112,7 +116,9 @@ const App = () => {
             <Route path="/admin/dashboard/students/add" element={<AddStudent />} />
             <Route path="/admin/dashboard/students/Edit" element={<EditStudent />} />
             <Route path="/admin/dashboard/bundle" element={<AddBundle />} />
-            <Route path="/admin/dashboard/paymenthistory" element={<PaymentHistory />} />
+            <Route path="/admin/dashboard/paymenthistory" element={<PaymentPage />} />
+            <Route path="/admin/dashboard/newsletter" element={<NewsLetter />} />
+
 
           </Routes>
 
