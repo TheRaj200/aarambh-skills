@@ -119,8 +119,7 @@ const PaymentHistory = () => {
   const totalPages = Math.ceil(filtered.length / itemsPerPage);
   const pageNumbers = Array.from({ length: totalPages }, (_, i) => i + 1);
 
-  // Total amount
-  const totalAmount = filtered.reduce((sum, p) => sum + p.amount, 0);
+
 
   function exportToCSV(payments) {
     const headers = ['User', 'Email', 'Item', 'Paid amount', 'Payment Method', 'Purchased date'];
@@ -138,44 +137,34 @@ const PaymentHistory = () => {
   }
 
   return (
-    <div>
-      <Nav />
-      <Bannertemp value={"Dashboard"} />
-      <div className="flex flex-col lg:flex-row gap-4 p-4">
-        <div className="lg:w-64">
-          <Sidebar col={"bg-purple-100 hover:bg-purple-100 text-[#020A47] font-bold"} />
-        </div>
-        <div className="flex-1">
-          <div className="bg-white rounded-lg shadow-lg p-6">
-            {/* Header */}
-            <div className="flex justify-between items-center mb-6">
-              <h1 className="text-xl font-bold">Purchase History</h1>
-            </div>
+    <div className=' overflow-auto w-full mt-5 lg:mt-0'>
+  
 
             {/* Table Controls */}
-            <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-4 px-8">
+            <div className="flex  flex-col md:flex-row md:items-center md:justify-between gap-4 mb-4 px-4 md:px-8 ">
               <button
-                className="bg-gray-200 px-4 py-2 rounded hover:bg-gray-300 flex items-center gap-2 w-fit"
+                className="bg-gray-200 w-1/4  lg:w-1/6 xl:w-[20%] 2xl:w-[10%] px-3 py-1 md:px-4 md:py-2 rounded hover:bg-gray-300 flex items-center gap-2  text-sm md:text-base"
                 onClick={() => exportToCSV(filtered)}
               >
                 <FaFileExport /> Export
               </button>
-              <div className="flex gap-2 w-full md:w-auto  items-center">
+              <div className="flex gap-2  w-1/2 lg:w-full flex-wrap  md:w-auto items-center">
                 <input
                   type="text"
                   placeholder="Search user, item..."
-                  className="border border-gray-300 rounded px-4 py-2 w-full md:w-80"
+                  className="border border-gray-300 rounded px-3 py-1 md:px-4 md:py-2 w-full md:w-80 text-sm md:text-base"
                   value={search}
                   onChange={e => setSearch(e.target.value)}
                 />
-                <DatePicker
+               <div className='flex gap-2'>
+               <DatePicker
                   selected={startDate}
                   onChange={date => setStartDate(date)}
                   selectsStart
                   startDate={startDate}
                   endDate={endDate}
                   dateFormat="dd/MM/yyyy"
-                  className="border border-gray-300 rounded px-4 py-2 w-36 focus:outline-none"
+                  className="border border-gray-300 rounded px-3 py-1 md:px-4 md:py-2 w-32 md:w-36 focus:outline-none text-sm md:text-base"
                   placeholderText="Start Date"
                 />
                 <DatePicker
@@ -186,10 +175,10 @@ const PaymentHistory = () => {
                   endDate={endDate}
                   minDate={startDate}
                   dateFormat="dd/MM/yyyy"
-                  className="border border-gray-300 rounded px-4 py-2 w-36 focus:outline-none"
+                  className="border border-gray-300 rounded px-3 py-1 md:px-4 md:py-2 w-32 md:w-36 focus:outline-none text-sm md:text-base"
                   placeholderText="End Date"
                 />
-               
+               </div>
               </div>
             </div>
 
@@ -198,68 +187,61 @@ const PaymentHistory = () => {
               <table className="w-full">
                 <thead className="bg-gray-50">
                   <tr>
-                    <th className="px-4 py-3 text-left">#</th>
-                    <th className="px-4 py-3 text-left">User</th>
-                    <th className="px-4 py-3 text-left">Item</th>
-                    <th className="px-4 py-3 text-left">Paid amount</th>
-                    <th className="px-4 py-3 text-left">Payment Method</th>
-                    <th className="px-4 py-3 text-left">Purchased date</th>
-                    <th className="px-4 py-3 text-left">Invoice</th>
+                    <th className="px-3 py-2 md:px-4 md:py-3 text-left text-sm md:text-base">#</th>
+                    <th className="px-3 py-2 md:px-4 md:py-3 text-left text-sm md:text-base">User</th>
+                    <th className="px-3 py-2 md:px-4 md:py-3 text-left text-sm md:text-base">Item</th>
+                    <th className="px-3 py-2 md:px-4 md:py-3 text-left text-sm md:text-base">Paid amount</th>
+                    <th className="px-3 py-2 md:px-4 md:py-3 text-left text-sm md:text-base">Payment Method</th>
+                    <th className="px-3 py-2 md:px-4 md:py-3 text-left text-sm md:text-base">Purchased date</th>
+                    <th className="px-3 py-2 md:px-4 md:py-3 text-left text-sm md:text-base">Invoice</th>
                   </tr>
                 </thead>
                 <tbody>
                   {currentItems.length === 0 && (
                     <tr>
-                      <td colSpan="7" className="text-center py-6 text-gray-400">No data found.</td>
+                      <td colSpan="7" className="text-center py-4 md:py-6 text-gray-400 text-sm md:text-base">No data found.</td>
                     </tr>
                   )}
                   {currentItems.map((p, idx) => (
                     <tr key={p.id} className="border-t">
-                      <td className="px-4 py-3">{indexOfFirstItem + idx + 1}</td>
-                      <td className="px-4 py-3">
-                        <div className="flex items-center gap-3">
-                          <div className="w-10 h-10 rounded-full bg-gray-200 flex items-center justify-center text-lg font-bold text-gray-500">
+                      <td className="px-3 py-2 md:px-4 md:py-3 text-sm md:text-base">{indexOfFirstItem + idx + 1}</td>
+                      <td className="px-3 py-2 md:px-4 md:py-3">
+                        <div className="flex items-center gap-2 md:gap-3">
+                          <div className="w-8 h-8 md:w-10 md:h-10 rounded-full bg-gray-200 flex items-center justify-center text-base md:text-lg font-bold text-gray-500">
                             {p.user.name[0]}
                           </div>
                           <div>
-                            <div className="font-medium">{p.user.name}</div>
-                            <div className="text-xs text-gray-500">{p.user.email}</div>
+                            <div className="font-medium text-sm md:text-base">{p.user.name}</div>
+                            <div className="text-xs md:text-sm text-gray-500">{p.user.email}</div>
                           </div>
                         </div>
                       </td>
-                      <td className="px-4 py-3">{p.item}</td>
-                      <td className="px-4 py-3 ">₹ {p.amount}  </td>
-                      <td className="px-4 py-3">{p.method}</td>
-                      <td className="px-4 py-3">{new Date(p.date).toLocaleDateString('en-GB')}</td>
-                      <td className="px-4 py-3">
-                        <button className="bg-gray-100 hover:bg-gray-200 p-2 rounded">
-                          <BsPrinter className="text-xl text-gray-500" />
+                      <td className="px-3 py-2 md:px-4 md:py-3 text-sm md:text-base">{p.item}</td>
+                      <td className="px-3 py-2 md:px-4 md:py-3 text-sm md:text-base">₹ {p.amount}</td>
+                      <td className="px-3 py-2 md:px-4 md:py-3 text-sm md:text-base">{p.method}</td>
+                      <td className="px-3 py-2 md:px-4 md:py-3 text-sm md:text-base">{new Date(p.date).toLocaleDateString('en-GB')}</td>
+                      <td className="px-3 py-2 md:px-4 md:py-3">
+                        <button className="bg-gray-100 hover:bg-gray-200 p-1 md:p-2 rounded">
+                          <BsPrinter className="text-lg md:text-xl text-gray-500" />
                         </button>
                       </td>
                     </tr>
                   ))}
                 </tbody>
-                {/* Total row */}
-                <tfoot>
-                  <tr className='flex w-full items-end'>
-                    <td colSpan="3"></td>
-                    <td className="px-4 py-3 font-bold">Total : ₹ {totalAmount}  </td>
-                    <td colSpan="3"></td>
-                  </tr>
-                </tfoot>
+              
               </table>
             </div>
 
             {/* Pagination */}
-            <div className="flex justify-between items-center mt-4 px-4">
-              <div className="text-sm text-gray-600">
+            <div className="flex flex-col md:flex-row justify-between items-center mt-4 px-4 gap-2 md:gap-0">
+              <div className="text-xs md:text-sm text-gray-600">
                 Showing {filtered.length === 0 ? 0 : indexOfFirstItem + 1} to {Math.min(indexOfLastItem, filtered.length)} of {filtered.length} data
               </div>
-              <div className="flex gap-2">
+              <div className="flex gap-1 md:gap-2">
                 <button
                   onClick={() => setCurrentPage(currentPage - 1)}
                   disabled={currentPage === 1}
-                  className={`px-3 py-1 rounded ${currentPage === 1
+                  className={`px-2 py-1 md:px-3 md:py-1 rounded text-sm md:text-base ${currentPage === 1
                     ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
                     : 'bg-gray-100 hover:bg-gray-200'
                     }`}
@@ -270,7 +252,7 @@ const PaymentHistory = () => {
                   <button
                     key={number}
                     onClick={() => setCurrentPage(number)}
-                    className={`px-3 py-1 rounded ${currentPage === number
+                    className={`px-2 py-1 md:px-3 md:py-1 rounded text-sm md:text-base ${currentPage === number
                       ? 'bg-[#020A47] text-white'
                       : 'bg-gray-100 hover:bg-gray-200'
                       }`}
@@ -281,7 +263,7 @@ const PaymentHistory = () => {
                 <button
                   onClick={() => setCurrentPage(currentPage + 1)}
                   disabled={currentPage === totalPages || totalPages === 0}
-                  className={`px-3 py-1 rounded ${currentPage === totalPages || totalPages === 0
+                  className={`px-2 py-1 md:px-3 md:py-1 rounded text-sm md:text-base ${currentPage === totalPages || totalPages === 0
                     ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
                     : 'bg-gray-100 hover:bg-gray-200'
                     }`}
@@ -291,9 +273,7 @@ const PaymentHistory = () => {
               </div>
             </div>
           </div>
-        </div>
-      </div>
-    </div>
+      
   );
 };
 
