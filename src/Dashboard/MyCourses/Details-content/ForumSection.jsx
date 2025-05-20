@@ -3,9 +3,6 @@
 import { useState, useEffect } from "react"
 import { FaHeart } from "react-icons/fa"
 
-// Set this to true when backend is ready
-const USE_API = false
-
 // Dummy data for development
 const DUMMY_DATA = [
   {
@@ -19,15 +16,27 @@ const DUMMY_DATA = [
         id: 11,
         author: "Priya Singh",
         time: "15 Minutes Ago",
-        content: "Aarambh Skills is a platform that helps you learn .",
-        replies: [
-          
-        ]
-      },
-      
+        content: "Aarambh Skills is a platform that helps you learn new skills and advance your career.",
+        replies: []
+      }
     ],
   },
- 
+  {
+    id: 2,
+    author: "Sneha Sharma",
+    time: "1 Hour Ago",
+    content: "Can anyone explain the difference between React and Angular?",
+    liked: false,
+    replies: [
+      {
+        id: 21,
+        author: "Amit Kumar",
+        time: "45 Minutes Ago",
+        content: "React is a library while Angular is a full framework. React is more flexible but requires more setup.",
+        replies: []
+      }
+    ],
+  },
   {
     id: 3,
     author: "Ankit Patel",
@@ -47,63 +56,18 @@ function ForumSection() {
   const [showQuestionInput, setShowQuestionInput] = useState(true)
   const [showReplyInput, setShowReplyInput] = useState({})
 
-  // Fetch all posts when component mounts
+  // Load dummy data when component mounts
   useEffect(() => {
-    if (USE_API) {
-      fetchPosts()
-    } else {
-      // Use dummy data
-      setTimeout(() => {
-        setPosts(DUMMY_DATA)
-        setLoading(false)
-      }, 1000) // Simulate loading delay
-    }
+    setTimeout(() => {
+      setPosts(DUMMY_DATA)
+      setLoading(false)
+    }, 1000) // Simulate loading delay
   }, [])
 
-  const fetchPosts = async () => {
-    try {
-      setLoading(true)
-      const response = await fetch(`${process.env.VITE_API_URL}/api/forum/posts`)
-      if (!response.ok) {
-        throw new Error('Failed to fetch posts')
-      }
-      const data = await response.json()
-      setPosts(data)
-      setError(null)
-    } catch (err) {
-      setError("Failed to load forum posts. Please try again later.")
-      console.error("Error fetching posts:", err)
-    } finally {
-      setLoading(false)
-    }
-  }
-
-  const handleLike = async (postId) => {
-    if (USE_API) {
-      try {
-        const response = await fetch(`${process.env.VITE_API_URL}/api/forum/posts/${postId}/like`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          }
-        })
-        
-        if (!response.ok) {
-          throw new Error('Failed to like post')
-        }
-
-        setPosts(posts.map((post) => 
-          post.id === postId ? { ...post, liked: !post.liked } : post
-        ))
-      } catch (err) {
-        console.error("Error liking post:", err)
-      }
-    } else {
-      // Handle likes locally for dummy data
-      setPosts(posts.map((post) => 
-        post.id === postId ? { ...post, liked: !post.liked } : post
-      ))
-    }
+  const handleLike = (postId) => {
+    setPosts(posts.map((post) => 
+      post.id === postId ? { ...post, liked: !post.liked } : post
+    ))
   }
 
   const handleReplyChange = (postId, text) => {
@@ -123,7 +87,7 @@ function ForumSection() {
     }
   }
 
-  const submitReply = async (postId, parentReplyId = null, replyInputId) => {
+  const submitReply = (postId, parentReplyId = null, replyInputId) => {
     if (!replyText[replyInputId]?.trim()) return
 
     const newReply = {
@@ -132,37 +96,6 @@ function ForumSection() {
       content: replyText[replyInputId],
       time: "Just now",
       replies: []
-    }
-
-    if (USE_API) {
-      try {
-        const payload = {
-          content: replyText[replyInputId],
-          parentReplyId
-        }
-
-        const response = await fetch(
-          `${process.env.VITE_API_URL}/api/forum/posts/${postId}/replies`,
-          {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(payload)
-          }
-        )
-
-        if (!response.ok) {
-          throw new Error('Failed to submit reply')
-        }
-
-        const data = await response.json()
-        newReply = data
-      } catch (err) {
-        console.error("Error submitting reply:", err)
-        alert("Failed to submit reply. Please try again.")
-        return
-      }
     }
 
     setPosts(
@@ -191,7 +124,7 @@ function ForumSection() {
     }))
   }
 
-  const submitQuestion = async () => {
+  const submitQuestion = () => {
     if (!newQuestion.trim()) return
 
     const newPost = {
@@ -201,31 +134,6 @@ function ForumSection() {
       content: newQuestion,
       liked: false,
       replies: []
-    }
-
-    if (USE_API) {
-      try {
-        const response = await fetch(`${process.env.VITE_API_URL}/api/forum/posts`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({
-            content: newQuestion
-          })
-        })
-
-        if (!response.ok) {
-          throw new Error('Failed to submit question')
-        }
-
-        const data = await response.json()
-        newPost = data
-      } catch (err) {
-        console.error("Error submitting question:", err)
-        alert("Failed to submit question. Please try again.")
-        return
-      }
     }
 
     setPosts([newPost, ...posts])
@@ -254,7 +162,7 @@ function ForumSection() {
     const replyId = `${postId}-${reply.id}`
     
     return (
-      <div className={`mt-2  ${level > 0 ? 'ml-8' : ''}`}>
+      <div className={`mt-2 ${level > 0 ? 'ml-8' : ''}`}>
         <div className="flex items-start gap-3">
           <div className="w-6 h-6 bg-gray-200 rounded-full flex items-center justify-center text-xs">
             {reply.author.charAt(0)}
