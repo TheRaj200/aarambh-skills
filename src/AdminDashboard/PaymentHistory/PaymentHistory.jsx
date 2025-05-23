@@ -137,7 +137,7 @@ const PaymentHistory = () => {
   }
 
   return (
-    <div className=' overflow-auto w-full mt-5 lg:mt-0'>
+    <div className=' overflow-auto  mt-5 lg:mt-0'>
   
 
             {/* Table Controls */}

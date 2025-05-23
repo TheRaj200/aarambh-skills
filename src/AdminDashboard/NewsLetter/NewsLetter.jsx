@@ -7,15 +7,16 @@ import ManageLetters from './ManageLetters'
 
 const NewsLetter = () => {
   return (
-    <div className=''>
+    <div className='bg-gray-50'>
         <Nav/>
         <Bannertemp value={"Dashboard"} />
-        <div className='lg:my-4 lg:flex lg:gap-4 '>
-        <Sidebar col={"bg-purple-100 hover:bg-purple-100 text-[#020A47] font-bold"}/>
-       <div className='flex flex-col gap-4 w-full p-4 md:p-0 lg:p-4'>
-        <ManageLetters/>
-    
-       </div>
+        <div className='flex flex-col lg:flex-row gap-6 p-4 lg:p-6'>
+          <div className='lg:w-72'>
+            <Sidebar col={"bg-purple-100 hover:bg-purple-100 text-[#020A47] font-bold"}/>
+          </div>
+          <div className='flex-1'>
+            <ManageLetters/>
+          </div>
         </div>
     </div>
   )

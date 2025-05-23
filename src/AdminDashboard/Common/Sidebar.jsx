@@ -7,7 +7,7 @@ import { RiShareForwardBoxLine, RiVideoAddLine } from "react-icons/ri";
 import { useNavigate, useLocation } from "react-router-dom";
 import { IoMenu, IoClose } from "react-icons/io5";
 import { MdAddchart } from "react-icons/md";
-import { BiSolidLayer } from "react-icons/bi";
+import { BiSolidDiscount, BiSolidLayer } from "react-icons/bi";
 
 const Sidebar = ({ col }) => {
   const [user, setUser] = useState(null);
@@ -60,11 +60,11 @@ const Sidebar = ({ col }) => {
   };
 
   return (
-    <div className="">
+    <div className="overflow-auto w-72 h-screen">
       {/* Mobile Menu Button */}
       <button
         onClick={() => setIsOpen(true)}
-        className="lg:hidden fixed top-4 right-4 z-50 p-2 h-10 rounded-md bg-white shadow-md"
+        className="lg:hidden fixed top-4 right-4 z-50 p-2 rounded-md bg-white shadow-md"
       >
         <IoMenu className="h-6 w-6 text-[#020A47]" />
       </button>
@@ -78,7 +78,7 @@ const Sidebar = ({ col }) => {
       )}
 
       {/* Sidebar */}
-      <div className={`fixed lg:static top-0 right-0 z-50 w-72 h-screen bg-white shadow-lg border-gray-50 border-[1px] rounded-l-2xl transform transition-transform duration-300 ease-in-out ${isOpen ? 'translate-x-0' : 'translate-x-full lg:translate-x-0'}`}>
+      <div className={`fixed lg:static top-0 right-0 z-50  bg-white shadow-lg border-gray-50 border-[1px] rounded-l-2xl transform transition-transform duration-300 ease-in-out ${isOpen ? 'translate-x-0' : 'translate-x-full lg:translate-x-0'}`}>
         {/* Close Button */}
         <button
           onClick={() => setIsOpen(false)}
@@ -152,6 +152,11 @@ const Sidebar = ({ col }) => {
                     className={`flex items-center space-x-3 p-2 rounded-lg hover:bg-gray-100 cursor-pointer transition-colors ${location.pathname === '/admin/dashboard/project/add' ? 'text-[#020A47]' : ''}`}>
                     <MdAddchart className="text-base" />
                     <span className="text-sm font-medium">Add New Project</span>
+                  </li>
+                  <li onClick={() => handleNavigation('/admin/dashboard/coupon')}
+                    className={`flex items-center space-x-3 p-2 rounded-lg hover:bg-gray-100 cursor-pointer transition-colors ${location.pathname === '/admin/dashboard/coupons' ? 'text-[#020A47]' : ''}`}>
+                    <BiSolidDiscount className="text-base" />
+                    <span className="text-sm font-medium">Coupon</span>
                   </li>
                 </ul>
               )}
