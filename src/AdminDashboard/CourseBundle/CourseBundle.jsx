@@ -9,17 +9,18 @@ import AddBundle from './AddBundle'
 
 const CourseBundle = () => {
   return (
-    <>
+    <div className=' bg-gray-50'>
         <Nav/>
         <Bannertemp value={"Dashboard"} />
-        <div className='lg:my-4 lg:flex lg:gap-4 '>
-        <Sidebar col={"bg-purple-100 hover:bg-purple-100 text-[#020A47] font-bold"}/>
-       <div className='flex flex-col gap-4 w-full p-4 md:p-0 lg:p-4'>
-        
-    
-       </div>
+        <div className='flex flex-col lg:flex-row gap-6 p-4 lg:p-6'>
+          <div className='lg:w-72'>
+            <Sidebar col={"bg-purple-100 hover:bg-purple-100 text-[#020A47] font-bold"}/>
+          </div>
+          <div className='w-full '>
+            <AddBundle/>
+          </div>
         </div>
-    </>
+    </div>
   )
 }
 export default CourseBundle

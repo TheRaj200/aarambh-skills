@@ -9,7 +9,7 @@ import EditPage from './EditPage'
 
 const EditCourse = () => {
   return (
-    <div className=''>
+    <div className='bg-gray-50'>
         <Nav/>
         <Bannertemp value={"Dashboard"} />
         <div className='lg:my-4 lg:flex lg:gap-4 '>

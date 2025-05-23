@@ -47,6 +47,12 @@ import EditStudent from './AdminDashboard/Students/EditStudent.jsx';
 import AddBundle from './AdminDashboard/CourseBundle/AddBundle.jsx';
 import NewsLetter from './AdminDashboard/NewsLetter/NewsLetter.jsx';
 import PaymentPage from './AdminDashboard/PaymentHistory/PaymentPage.jsx';
+import CourseBundle from './AdminDashboard/CourseBundle/CourseBundle.jsx';
+import ManageCoupon from './AdminDashboard/Courses/Coupon/ManageCoupon.jsx';
+import AddCoupon from './AdminDashboard/Courses/Coupon/AddCoupon.jsx';
+import EditCoupon from './AdminDashboard/Courses/Coupon/EditCoupon.jsx';
+import ManageBundles from './AdminDashboard/CourseBundle/ManageBundles.jsx';
+import ManageSubscribers from './AdminDashboard/CourseBundle/ManageSubscribers.jsx';
 
 const App = () => {
   const [cartCount, setCartCount] = useState(0);
@@ -111,9 +117,14 @@ const App = () => {
             <Route path="/admin/dashboard/students" element={<Students />} />
             <Route path="/admin/dashboard/students/add" element={<AddStudent />} />
             <Route path="/admin/dashboard/students/Edit" element={<EditStudent />} />
-            <Route path="/admin/dashboard/bundle" element={<AddBundle />} />
+            <Route path="/admin/dashboard/bundle/add" element={<CourseBundle />} />
+            <Route path="/admin/dashboard/bundle/manage" element={<ManageBundles />} />
             <Route path="/admin/dashboard/paymenthistory" element={<PaymentPage />} />
             <Route path="/admin/dashboard/newsletter" element={<NewsLetter />} />
+            <Route path="/admin/dashboard/coupon" element={<ManageCoupon />} />
+            <Route path="/admin/dashboard/coupon/add" element={<AddCoupon />} />
+            <Route path="/admin/dashboard/coupon/edit/:id" element={<EditCoupon />} />
+            <Route path="/admin/dashboard/subscriber" element={<ManageSubscribers />} />
 
 
           </Routes>
