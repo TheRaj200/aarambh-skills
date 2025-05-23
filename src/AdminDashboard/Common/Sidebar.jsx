@@ -161,6 +161,12 @@ const Sidebar = ({ col }) => {
                 </ul>
               )}
             </div>
+        
+            <li onClick={() => handleNavigation('/admin/dashboard/bundle/manage')}
+              className={`flex items-center space-x-3 text-[#020A47] hover:bg-gray-100 p-3 rounded-lg cursor-pointer transition-colors ${location.pathname === '/admin/dashboard/bundle/manage' ? col : ''}`}>
+              <BiSolidLayer className="text-xl" />
+              <span className="text-base font-medium">Course Bundle</span>
+            </li>
 
             <li onClick={() => handleNavigation('/admin/dashboard/students')}
               className={`flex items-center space-x-3 text-[#020A47] hover:bg-gray-100 p-3 rounded-lg cursor-pointer transition-colors ${location.pathname === '/admin/dashboard/students' ? col : ''}`}>
@@ -168,11 +174,7 @@ const Sidebar = ({ col }) => {
               <span className="text-base font-medium">Students enrolled</span>
             </li>
 
-            <li onClick={() => handleNavigation('/admin/dashboard/bundle')}
-              className={`flex items-center space-x-3 text-[#020A47] hover:bg-gray-100 p-3 rounded-lg cursor-pointer transition-colors ${location.pathname === '/admin/dashboard/bundle' ? col : ''}`}>
-              <BiSolidLayer className="text-xl" />
-              <span className="text-base font-medium">Add Bundle</span>
-            </li>
+       
 
             <li onClick={() => handleNavigation('/admin/dashboard/paymenthistory')}
               className={`flex items-center space-x-3 text-[#020A47] hover:bg-gray-100 p-3 rounded-lg cursor-pointer transition-colors ${location.pathname === '/admin/dashboard/paymenthistory' ? col : ''}`}>

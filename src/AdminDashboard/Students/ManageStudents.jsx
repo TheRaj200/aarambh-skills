@@ -132,7 +132,7 @@ const ManageStudents = () => {
       {/* Table Controls */}
       <div className="flex flex-col sm:flex-row justify-between items-center mb-4 gap-4">
         
-        <div className="w-full sm:w-auto">
+        <div className="w-full sm:w-auto flex gap-4">
           <input
             type="text"
             placeholder="Search Name or Email"
@@ -140,6 +140,8 @@ const ManageStudents = () => {
             onChange={e => { setSearch(e.target.value); setCurrentPage(1); }}
             className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#020A47]"
           />
+          <button  className="px-4 py-2 bg-[#020A47] text-white rounded-lg">Search</button>
+
         </div>
       </div>
 
