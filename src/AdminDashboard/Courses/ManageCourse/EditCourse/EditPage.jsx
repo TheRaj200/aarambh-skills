@@ -1,8 +1,11 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useDrag, useDrop, DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
+import { useLocation } from "react-router-dom";
+import apiService from '../../../../api';
+
 
 const ItemType = {
   CURRICULUM_ITEM: 'curriculumItem',
@@ -46,22 +49,48 @@ const DraggableItem = ({ item, index, moveItem, handleEdit, handleDelete }) => {
 };
 
 const EditPage = () => {
+  const location = useLocation();
+  const queryParams = new URLSearchParams(location.search);
+  const courseId = queryParams.get("courseId");
+  const [projects, setProjects] = useState([])
+  const [quizes, setQuizes] = useState([])
+  const [videos, setVideos] = useState([])
+
   const [courseDetails, setCourseDetails] = useState({
     title: 'Sample Course',
-    shortDescription: 'This is a short description.',
+    short_description: 'This is a short description.',
     description: 'This is a sample course description.',
     category: '',
-    courseLevel: '',
+    course_level: '',
     language: '',
-    pricingType: 'paid',
+    pricing_type: 'paid',
     price: '',
     hasDiscount: false,
-    discountedPrice: '',
-    expiryPeriod: 'lifetime',
-    dripContent: 'off',
-    thumbnail: null,
+    discount_price: '',
+    expiry_period: 'lifetime',
+    drip_content_enable: 'off',
+    image: null,
     status: 'draft',
   });
+
+
+  useEffect(() => {
+    (async () => {
+      const response = await apiService.course.fetchCourseDetailById(courseId)
+      if (response.status) {
+        const data = response.data
+        const details = data.course
+        const proj = data.projects
+        const videos = data.videos
+        const quizes = data.quizes
+        console.log(details, "Projects >> ", proj, "Videos >> ", videos, "Quizes >>> ", quizes)
+        setCourseDetails({ ...response.data.course })
+        setProjects(proj)
+        setQuizes(quizes)
+        setVideos(videos)
+      }
+    })()
+  }, [])
 
   const [curriculum, setCurriculum] = useState([
     { id: 'item-0', type: 'video', title: 'Introduction to Course' },
@@ -71,9 +100,38 @@ const EditPage = () => {
     { id: 'item-4', type: 'quiz', title: 'Final Quiz' },
     { id: 'item-5', type: 'project', title: 'Capstone Project' }
   ]);
+  useEffect(() => {
+    const crr = []
+    console.log("Project >> ", (projects))
+    console.log("Quizz >> ", quizes)
+    console.log("Videos ", videos)
+    projects.map((proj) => {
+      crr.push({
+        id: `proj-${proj.id}`,
+        type: "project",
+        title: proj.title
+      })
+    })
+    quizes.map((qu) => {
+      crr.push({
+        id: `quiz-${qu.id}`,
+        type: "quiz",
+        title: qu.title
+      })
+    })
+    videos.map((vi) => {
+      crr.push({
+        id: `video-${vi.id}`,
+        type: "video",
+        title: vi.title
+      })
+    })
+    setCurriculum(crr)
+  }, [projects, quizes, videos])
+
 
   const handleCourseDetailChange = (field, value) => {
-    setCourseDetails({ ...courseDetails, [field]: value });
+    // setCourseDetails({ ...courseDetails, [field]: value });
   };
 
   const handleCurriculumEdit = (index, newValue) => {
@@ -126,9 +184,9 @@ const EditPage = () => {
                     Short Description
                   </label>
                   <textarea
-                    name="shortDescription"
-                    value={courseDetails.shortDescription}
-                    onChange={(e) => handleCourseDetailChange('shortDescription', e.target.value)}
+                    name="short_description"
+                    value={courseDetails.short_description}
+                    onChange={(e) => handleCourseDetailChange('short_description', e.target.value)}
                     placeholder="Enter Short Description"
                     rows="3"
                     className="w-full p-2.5 sm:p-3 border rounded-lg focus:outline-none focus:border-[#020A47] text-sm sm:text-base"
@@ -187,7 +245,7 @@ const EditPage = () => {
                     className="w-full p-2.5 sm:p-3 border rounded-lg focus:outline-none focus:border-[#020A47] text-sm sm:text-base"
                     required
                   >
-                    <option value="">Select a category</option>
+                    <option value="">{courseDetails.category_title}</option>
                     {/* Add category options dynamically */}
                   </select>
                 </div>
@@ -198,9 +256,9 @@ const EditPage = () => {
                     Course level <span className="text-red-500">*</span>
                   </label>
                   <select
-                    name="courseLevel"
-                    value={courseDetails.courseLevel}
-                    onChange={(e) => handleCourseDetailChange('courseLevel', e.target.value)}
+                    name="course_level"
+                    value={courseDetails.course_level}
+                    onChange={(e) => handleCourseDetailChange('course_level', e.target.value)}
                     className="w-full p-2.5 sm:p-3 border rounded-lg focus:outline-none focus:border-[#020A47] text-sm sm:text-base"
                     required
                   >
@@ -239,10 +297,10 @@ const EditPage = () => {
                       <label key={type} className="flex items-center p-2 border rounded-lg hover:bg-gray-50">
                         <input
                           type="radio"
-                          name="pricingType"
+                          name="pricing_type"
                           value={type}
-                          checked={courseDetails.pricingType === type}
-                          onChange={(e) => handleCourseDetailChange('pricingType', e.target.value)}
+                          checked={courseDetails.pricing_type === type}
+                          onChange={(e) => handleCourseDetailChange('pricing_type', e.target.value)}
                           className="mr-2"
                         />
                         <span className="text-sm capitalize">{type}</span>
@@ -252,7 +310,7 @@ const EditPage = () => {
                 </div>
 
                 {/* Price */}
-                {courseDetails.pricingType === 'paid' && (
+                {courseDetails.pricing_type === 'paid' && (
                   <div>
                     <label className="block text-sm font-medium mb-1 text-gray-700">
                       Price (₹) <span className="text-red-500">*</span>
@@ -270,7 +328,7 @@ const EditPage = () => {
                 )}
 
                 {/* Discount */}
-                {courseDetails.pricingType === 'paid' && (
+                {courseDetails.pricing_type === 'paid' && (
                   <div className="space-y-3">
                     <label className="flex items-center p-2 border rounded-lg hover:bg-gray-50">
                       <input
@@ -285,9 +343,9 @@ const EditPage = () => {
                     {courseDetails.hasDiscount && (
                       <input
                         type="number"
-                        name="discountedPrice"
-                        value={courseDetails.discountedPrice}
-                        onChange={(e) => handleCourseDetailChange('discountedPrice', e.target.value)}
+                        name="discount_price"
+                        value={courseDetails.discount_price}
+                        onChange={(e) => handleCourseDetailChange('discount_price', e.target.value)}
                         placeholder="Enter your discount price (₹)"
                         className="w-full p-2.5 sm:p-3 border rounded-lg focus:outline-none focus:border-[#020A47] text-sm sm:text-base"
                       />
@@ -301,14 +359,14 @@ const EditPage = () => {
                     Expiry period
                   </label>
                   <div className="grid grid-cols-2 gap-3">
-                    {['lifetime', 'limited'].map((period) => (
+                    {['life time', 'limited'].map((period) => (
                       <label key={period} className="flex items-center p-2 border rounded-lg hover:bg-gray-50">
                         <input
                           type="radio"
-                          name="expiryPeriod"
+                          name="expiry_period"
                           value={period}
-                          checked={courseDetails.expiryPeriod === period}
-                          onChange={(e) => handleCourseDetailChange('expiryPeriod', e.target.value)}
+                          checked={courseDetails.expiry_period === period}
+                          onChange={(e) => handleCourseDetailChange('expiry_period', e.target.value)}
                           className="mr-2"
                         />
                         <span className="text-sm capitalize">{period === 'limited' ? 'Limited time' : period}</span>
@@ -323,63 +381,69 @@ const EditPage = () => {
                     Enable drip content <span className="text-red-500">*</span>
                   </label>
                   <div className="grid grid-cols-2 gap-3">
-                    {['off', 'on'].map((option) => (
+                    {[false, true].map((option) => (
                       <label key={option} className="flex items-center p-2 border rounded-lg hover:bg-gray-50">
                         <input
                           type="radio"
-                          name="dripContent"
+                          name="drip_content_enable"
                           value={option}
-                          checked={courseDetails.dripContent === option}
-                          onChange={(e) => handleCourseDetailChange('dripContent', e.target.value)}
+                          checked={courseDetails.drip_content_enable === option}
+                          onChange={(e) => handleCourseDetailChange('drip_content_enable', e.target.value)}
                           className="mr-2"
                         />
-                        <span className="text-sm capitalize">{option}</span>
+                        <span className="text-sm capitalize">{option ? "ON" : "Off"}</span>
                       </label>
                     ))}
                   </div>
                 </div>
 
-                {/* Thumbnail */}
+                {/* image */}
                 <div>
                   <label className="block text-sm font-medium mb-1 text-gray-700">
-                    Thumbnail
+                    image
                   </label>
                   <div className="flex items-center justify-center w-full">
-                    <label className="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100">
-                      <div className="flex flex-col items-center justify-center pt-5 pb-6">
+                    <label className="flex flex-col items-center justify-center w-full  border-2 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100">
+                      <div className="flex flex-col items-center justify-center space-y-2 pt-5 pb-6">
                         <svg className="w-8 h-8 mb-4 text-gray-500" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 16">
-                          <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 13h3a3 3 0 0 0 0-6h-.025A5.56 5.56 0 0 0 16 6.5 5.5 5.5 0 0 0 5.207 5.021C5.137 5.017 5.071 5 5 5a4 4 0 0 0 0 8h2.167M10 15V6m0 0L8 8m2-2 2 2"/>
+                          <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 13h3a3 3 0 0 0 0-6h-.025A5.56 5.56 0 0 0 16 6.5 5.5 5.5 0 0 0 5.207 5.021C5.137 5.017 5.071 5 5 5a4 4 0 0 0 0 8h2.167M10 15V6m0 0L8 8m2-2 2 2" />
                         </svg>
                         <p className="mb-2 text-sm text-gray-500"><span className="font-semibold">Click to upload</span></p>
                         <p className="text-xs text-gray-500">PNG, JPG or JPEG</p>
+                        {
+                          courseDetails.image && <div>
+                            <img src={courseDetails.image} width={100} height={100} />
+                          </div>
+                        }
                       </div>
                       <input
                         type="file"
                         accept="image/*"
-                        onChange={(e) => handleCourseDetailChange('thumbnail', e.target.files[0])}
+                        onChange={(e) => handleCourseDetailChange('image', e.target.files[0])}
                         className="hidden"
                       />
+
                     </label>
                   </div>
                 </div>
               </div>
             </div>
 
-          
 
-          <h2 className="text-2xl font-bold mb-4">Course Curriculum</h2>
-          <div className="mb-6">
-            {curriculum.map((item, index) => (
-              <DraggableItem
-                key={item.id}
-                item={item}
-                index={index}
-                moveItem={moveItem}
-                handleEdit={handleCurriculumEdit}
-                handleDelete={handleCurriculumDelete}
-              />
-            ))}
-          </div>
+
+            <h2 className="text-2xl font-bold mb-4">Course Curriculum</h2>
+            <div className="mb-6">
+              {curriculum.map((item, index) => (
+                <DraggableItem
+                  key={item.id}
+                  item={item}
+                  index={index}
+                  moveItem={moveItem}
+                  handleEdit={handleCurriculumEdit}
+                  handleDelete={handleCurriculumDelete}
+                />
+              ))}
+            </div>
             {/* Submit Button */}
             <div className="flex justify-end pt-4 sm:pt-6">
               <button

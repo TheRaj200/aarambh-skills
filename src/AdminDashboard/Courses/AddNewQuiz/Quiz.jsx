@@ -150,6 +150,7 @@ const Quiz = () => {
       return;
     }
     console.log("Question is ", questions)
+    setLoading(true);
     const questionData = questions.map((question) => {
       return {
         ...question,
@@ -161,29 +162,26 @@ const Quiz = () => {
     const response = await apiService.course.uploadQuizInBulk(questionData, selectedCourse)
     if (response.status) {
       toast.success("Quizz Uploaded Successfully")
+      setQuizTitle('');
+      setQuestions([{
+        question: '',
+        options: ['', '', '', ''],
+        answer: ''
+      }]);
     } else {
       toast.error(response.error)
     }
+    setLoading(false);
 
     console.log("questionData>>>>> ", questionData, selectedCourse)
-    // setLoading(true);
-    // try {
-    //   // Simulate API call
-    //   await new Promise(resolve => setTimeout(resolve, 1000));
+    try {
+      // Simulate API call
 
-    //   showNotification('Quiz added successfully');
-    //   // Reset form
-    //   setQuizTitle('');
-    //   setQuestions([{
-    //     question: '',
-    //     options: ['', '', '', ''],
-    //     answer: ''
-    //   }]);
-    // } catch (error) {
-    //   showNotification('Error adding quiz', 'error');
-    // } finally {
-    //   setLoading(false);
-    // }
+      // Reset form
+    } catch (error) {
+      showNotification('Error adding quiz', 'error');
+    } finally {
+    }
   };
 
   return (

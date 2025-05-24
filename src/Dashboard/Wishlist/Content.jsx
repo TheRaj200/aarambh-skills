@@ -54,7 +54,7 @@ const Content = () => {
                     return;
                 }
 
-                const response = await fetch(`${envConfig.backendUrl}/courses/wishlist/`, {
+                const response = await fetch(`${envConfig.backendUrl}/courses/wishlist`, {
                     headers: {
                         'Authorization': `Bearer ${token}`,
                         'Content-Type': 'application/json'
@@ -87,7 +87,7 @@ const Content = () => {
                 return;
             }
 
-            const response = await fetch(`${envConfig.backendUrl}/courses/like/${course.course}/`, {
+            const response = await fetch(`${envConfig.backendUrl}/courses/like/${course.course}`, {
                 method: 'PUT',
                 headers: {
                     'Authorization': `Bearer ${token}`,

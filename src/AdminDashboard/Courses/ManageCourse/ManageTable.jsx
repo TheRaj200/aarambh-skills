@@ -71,7 +71,7 @@ const ManageTable = () => {
   const handleEditCourse = (courseId) => {
     console.log('Edit course:', courseId);
     // Implement edit course functionality
-    handleNavigation(`/admin/dashboard/courseedit`);
+    handleNavigation(`/admin/dashboard/courseedit?courseId=${courseId}`);
   };
 
   const handleToggleCourseStatus = (courseId) => {

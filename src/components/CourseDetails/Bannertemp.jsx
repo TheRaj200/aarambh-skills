@@ -17,7 +17,7 @@ function Bannertemp() {
   useEffect(() => {
     const fetchCourseData = async () => {
       try {
-        const response = await fetch(`${envConfig.backendUrl}/courses/get/`);
+        const response = await fetch(`${envConfig.backendUrl}/courses/get`);
         const data = await response.json();
         
         if (data.status) {

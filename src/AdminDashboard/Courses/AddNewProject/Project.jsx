@@ -1,16 +1,16 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { FaUpload, FaPlus } from 'react-icons/fa';
 import { IoMdClose } from 'react-icons/io';
 import { IoMdCheckmarkCircle } from "react-icons/io";
 import { MdError } from "react-icons/md";
+import apiService from '../../../api';
 
 const Notification = ({ message, type }) => (
   <div
-    className={`fixed top-4 right-4 z-50 min-w-[300px] p-4 rounded-lg shadow-lg animate-slideIn ${
-      type === 'success' 
-        ? 'bg-green-50 border-l-4 border-green-500' 
-        : 'bg-red-50 border-l-4 border-red-500'
-    }`}
+    className={`fixed top-4 right-4 z-50 min-w-[300px] p-4 rounded-lg shadow-lg animate-slideIn ${type === 'success'
+      ? 'bg-green-50 border-l-4 border-green-500'
+      : 'bg-red-50 border-l-4 border-red-500'
+      }`}
   >
     <div className="flex items-center space-x-3">
       {type === 'success' ? (
@@ -18,9 +18,8 @@ const Notification = ({ message, type }) => (
       ) : (
         <MdError className="text-2xl text-red-500" />
       )}
-      <p className={`font-medium ${
-        type === 'success' ? 'text-green-800' : 'text-red-800'
-      }`}>
+      <p className={`font-medium ${type === 'success' ? 'text-green-800' : 'text-red-800'
+        }`}>
         {message}
       </p>
     </div>
@@ -28,14 +27,8 @@ const Notification = ({ message, type }) => (
 );
 
 const Project = () => {
-  const [courses] = useState([
-    { id: 1, title: "Python for Beginners" },
-    { id: 2, title: "Web Development" },
-    { id: 3, title: "Data Science" },
-    { id: 4, title: "Machine Learning" },
-    { id: 5, title: "Mobile App Development" }
-  ]);
-  
+  const [courses, setCourses] = useState([]);
+
   const [selectedCourse, setSelectedCourse] = useState('');
   const [projectTitle, setProjectTitle] = useState('');
   const [projectType, setProjectType] = useState('minor');
@@ -53,12 +46,23 @@ const Project = () => {
 
   const handleFileUpload = (event) => {
     const files = Array.from(event.target.files);
+    console.log("Files are ")
     setProjectFiles(prevFiles => [...prevFiles, ...files]);
   };
 
   const removeFile = (index) => {
     setProjectFiles(prevFiles => prevFiles.filter((_, i) => i !== index));
   };
+
+  useEffect(() => {
+    (async () => {
+      const coursesData = await apiService.course.fetchCourse()
+      console.log("Coysre data ", coursesData)
+      if (coursesData.status) {
+        setCourses(coursesData.data)
+      }
+    })()
+  }, [])
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -68,21 +72,45 @@ const Project = () => {
     }
 
     setLoading(true);
-    try {
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
+    const filesData = await Promise.all(
+      projectFiles.map(async (proj) => {
+        const formData = new FormData();
+        formData.append("file", proj);
+        console.log("Api hitting >> ");
+        const responseData = await apiService.course.uploadVideo(formData);
+        if (responseData.status) {
+          return responseData.data;
+        } else {
+          console.log("Error in uploading >> ");
+          return null;
+        }
+      })
+    );
+    const filteredFilesData = filesData.filter(Boolean);
+
+    console.log("File data >>>> ", filesData)
+    const data = {
+      title: projectTitle,
+      description: projectDescription,
+      meta_data: {
+        files: filteredFilesData,
+        type: projectType
+      },
+      project_url: null
+    }
+    console.log("Data is >>>>>>>>>> ", data)
+    const uploadCourse = await apiService.course.uploadProject(data, selectedCourse)
+    if (uploadCourse.status) {
       showNotification('Project added successfully');
-      // Reset form
       setProjectTitle('');
       setProjectDescription('');
       setProjectFiles([]);
       setSelectedCourse('');
-    } catch (error) {
+    } else {
       showNotification('Error adding project', 'error');
-    } finally {
-      setLoading(false);
     }
+    setLoading(false);
+
   };
 
   return (
@@ -90,10 +118,10 @@ const Project = () => {
       {notification.show && (
         <Notification message={notification.message} type={notification.type} />
       )}
-      
+
       <div className="max-w-4xl mx-auto bg-white rounded-lg shadow-md p-6">
         <h2 className="text-2xl font-bold mb-6 text-[#020A47]">Add New Project</h2>
-        
+
         <form onSubmit={handleSubmit} className="space-y-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
@@ -208,7 +236,7 @@ const Project = () => {
                     <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                     <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                   </svg>
-                  Saving...
+                  Uploading...
                 </>
               ) : (
                 'Save Project'

@@ -20,7 +20,7 @@ export default function Skills({ skill }) {
   useEffect(() => {
     const fetchCourses = async () => {
       try {
-        const response = await fetch(`${envConfig.backendUrl}/courses/get/`);
+        const response = await fetch(`${envConfig.backendUrl}/courses/get`);
         if (!response.ok) {
           throw new Error('Failed to fetch courses');
         }

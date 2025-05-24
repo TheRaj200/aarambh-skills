@@ -19,7 +19,7 @@ function BundlesPage() {
   useEffect(() => {
     const fetchBundles = async () => {
       try {
-        const response = await fetch(`${envConfig.backendUrl}/courses/get_bundles/`);
+        const response = await fetch(`${envConfig.backendUrl}/courses/get_bundles`);
         if (!response.ok) {
           throw new Error('Failed to fetch bundles');
         }

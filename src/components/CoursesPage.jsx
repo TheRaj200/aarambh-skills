@@ -57,7 +57,7 @@ function CoursesPage() {
   useEffect(() => {
     const fetchCourses = async () => {
       try {
-        const response = await fetch(`${envConfig.backendUrl}/courses/get/`);
+        const response = await fetch(`${envConfig.backendUrl}/courses/get`);
         const data = await response.json();
         
         if (data.status) {
@@ -105,7 +105,7 @@ function CoursesPage() {
     }
 
     try {
-      const response = await fetch(`${envConfig.backendUrl}/courses/like/${courseId}/`, {
+      const response = await fetch(`${envConfig.backendUrl}/courses/like/${courseId}`, {
         method: 'PUT',
         headers: {
           'Authorization': `Bearer ${token}`,
