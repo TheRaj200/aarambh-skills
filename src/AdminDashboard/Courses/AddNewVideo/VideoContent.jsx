@@ -1,34 +1,74 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { GoPlus } from 'react-icons/go';
 import { FaUpload } from 'react-icons/fa';
+import apiService from '../../../api';
+import toast from 'react-hot-toast';
 
 const VideoContent = () => {
   const [selectedCourse, setSelectedCourse] = useState('');
-  const [videos, setVideos] = useState([{ title: '', description: '', file: null }]);
+  const [videos, setVideos] = useState([{ title: '', description: '', video_url: "" }]);
+  const [courses, setCourses] = useState([])
+  const [isLoading, setIsLoading] = useState(false)
 
   const handleCourseChange = (e) => {
     setSelectedCourse(e.target.value);
   };
 
-  const handleVideoChange = (index, field, value) => {
+
+  useEffect(() => {
+    (async () => {
+      const response = await apiService.course.fetchCourse()
+      if (response.status) setCourses(response.data)
+      else toast.error(response.error)
+    })()
+  }, [])
+
+
+  const handleVideoChange = async (index, field, value) => {
+    console.log("Index is ", index)
+    console.log("Field is ", field)
+    console.log("Value is ", value)
+    let dataValue = value
+    if (field === "video_url") {
+      console.log("Hit >>>>>>>>>>>>>>>>>>> ", value)
+      const formData = new FormData()
+      formData.append("file", value)
+      setIsLoading(true)
+      const response = await apiService.course.uploadVideo(formData)
+      if (response.status) {
+        dataValue = response.data
+      } else {
+        toast.error(response.error)
+        return;
+      }
+      setIsLoading(false)
+    }
+
     const newVideos = [...videos];
-    newVideos[index][field] = value;
+    newVideos[index][field] = dataValue;
     setVideos(newVideos);
   };
+  console.log("Selected ", selectedCourse)
 
   const handleAddVideo = () => {
-    setVideos([...videos, { title: '', description: '', file: null }]);
+    setVideos([...videos, { title: '', description: '', video_url: null }]);
   };
 
   const handleRemoveVideo = (index) => {
     setVideos(videos.filter((_, i) => i !== index));
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     // Implement submit functionality
+    const response = await apiService.course.uploadVideoWithTitleAndDes(videos, selectedCourse)
+    if (response.status) {
+      toast.success("Succes")
+    } else {
+      toast.error(response.error)
+    }
     console.log('Submitting videos:', videos);
   };
-
+  console.log("is loading , ", isLoading)
   return (
     <div className="p-6">
       <div className="mb-6">
@@ -46,8 +86,15 @@ const VideoContent = () => {
             >
               <option value="">Select a course</option>
               {/* Add course options dynamically */}
-              <option value="course1">Course 1</option>
-              <option value="course2">Course 2</option>
+              {
+                courses.map((co, index) => {
+                  {
+                    return <option key={index} value={co.id}>{co.title}</option>
+                  }
+                })
+              }
+              {/* <option value="course1">Course 1</option>
+              <option value="course2">Course 2</option> */}
             </select>
           </div>
         </div>
@@ -79,13 +126,24 @@ const VideoContent = () => {
             <div className="flex items-center justify-center w-full">
               <label className="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100">
                 <div className="flex flex-col items-center justify-center pt-5 pb-6">
-                  <FaUpload className="w-8 h-8 mb-4 text-gray-500" />
-                  <p className="mb-2 text-sm text-gray-500"><span className="font-semibold">Click to upload</span> or drag and drop</p>
-                  <p className="text-xs text-gray-500">MP4, AVI, MOV</p>
+                  {
+                    !isLoading ? (
+                      <>
+                        <FaUpload className="w-8 h-8 mb-4 text-gray-500" />
+                        <p className="mb-2 text-sm text-gray-500"><span className="font-semibold">Click to upload</span> or drag and drop</p>
+                        <p className="text-xs text-gray-500">MP4, AVI, MOV</p>
+                      </>
+                    ) : <div>Uploading</div>
+                  }
+                  {
+                    video.video_url && (
+                      <div>{video.video_url}</div>
+                    )
+                  }
                 </div>
                 <input
                   type="file"
-                  onChange={(e) => handleVideoChange(index, 'file', e.target.files[0])}
+                  onChange={(e) => handleVideoChange(index, 'video_url', e.target.files[0])}
                   className="hidden"
                 />
               </label>

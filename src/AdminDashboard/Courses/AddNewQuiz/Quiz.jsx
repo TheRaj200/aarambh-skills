@@ -1,17 +1,18 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { FaPlus, FaTrash, FaUpload } from 'react-icons/fa';
 import { IoMdClose } from 'react-icons/io';
 import { IoMdCheckmarkCircle } from "react-icons/io";
 import { MdError } from "react-icons/md";
 import * as XLSX from 'xlsx';
+import apiService from '../../../api';
+import toast from 'react-hot-toast';
 
 const Notification = ({ message, type }) => (
   <div
-    className={`fixed top-4 right-4 z-50 min-w-[300px] p-4 rounded-lg shadow-lg animate-slideIn ${
-      type === 'success' 
-        ? 'bg-green-50 border-l-4 border-green-500' 
-        : 'bg-red-50 border-l-4 border-red-500'
-    }`}
+    className={`fixed top-4 right-4 z-50 min-w-[300px] p-4 rounded-lg shadow-lg animate-slideIn ${type === 'success'
+      ? 'bg-green-50 border-l-4 border-green-500'
+      : 'bg-red-50 border-l-4 border-red-500'
+      }`}
   >
     <div className="flex items-center space-x-3">
       {type === 'success' ? (
@@ -19,9 +20,8 @@ const Notification = ({ message, type }) => (
       ) : (
         <MdError className="text-2xl text-red-500" />
       )}
-      <p className={`font-medium ${
-        type === 'success' ? 'text-green-800' : 'text-red-800'
-      }`}>
+      <p className={`font-medium ${type === 'success' ? 'text-green-800' : 'text-red-800'
+        }`}>
         {message}
       </p>
     </div>
@@ -29,21 +29,21 @@ const Notification = ({ message, type }) => (
 );
 
 const Quiz = () => {
-  const [courses] = useState([
+  const [courses, setCourses] = useState([
     { id: 1, title: "Python for Beginners" },
     { id: 2, title: "Web Development" },
     { id: 3, title: "Data Science" },
     { id: 4, title: "Machine Learning" },
     { id: 5, title: "Mobile App Development" }
   ]);
-  
+
   const [selectedCourse, setSelectedCourse] = useState('');
   const [quizTitle, setQuizTitle] = useState('');
   const [quizLevel, setQuizLevel] = useState('low');
   const [questions, setQuestions] = useState([{
     question: '',
     options: ['', '', '', ''],
-    correctAnswer: ''
+    answer: ''
   }]);
   const [notification, setNotification] = useState({ message: '', type: '', show: false });
   const [loading, setLoading] = useState(false);
@@ -59,7 +59,7 @@ const Quiz = () => {
     setQuestions([...questions, {
       question: '',
       options: ['', '', '', ''],
-      correctAnswer: ''
+      answer: ''
     }]);
   };
 
@@ -104,8 +104,8 @@ const Quiz = () => {
 
         const formattedQuestions = jsonData.map(row => {
           // Check if required columns exist
-          if (!row.question || !row.optionA || !row.optionB || !row.optionC || !row.optionD || !row.correctAnswer) {
-            throw new Error('Excel file must contain columns: question, optionA, optionB, optionC, optionD, correctAnswer');
+          if (!row.question || !row.optionA || !row.optionB || !row.optionC || !row.optionD || !row.answer) {
+            throw new Error('Excel file must contain columns: question, optionA, optionB, optionC, optionD, answer');
           }
 
           return {
@@ -116,7 +116,7 @@ const Quiz = () => {
               row.optionC.toString(),
               row.optionD.toString()
             ],
-            correctAnswer: row.correctAnswer.toString().toUpperCase()
+            answer: row.answer.toString().toUpperCase()
           };
         });
 
@@ -135,31 +135,55 @@ const Quiz = () => {
     reader.readAsArrayBuffer(file);
   };
 
+  useEffect(() => {
+    (async () => {
+      const response = await apiService.course.fetchCourse()
+      if (response.status) setCourses(response.data)
+      else toast.error(response.error)
+    })()
+  }, [])
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!selectedCourse || !quizTitle || questions.some(q => !q.question || !q.correctAnswer)) {
+    if (!selectedCourse || !quizTitle || questions.some(q => !q.question || !q.answer)) {
       showNotification('Please fill all required fields', 'error');
       return;
     }
+    console.log("Question is ", questions)
+    const questionData = questions.map((question) => {
+      return {
+        ...question,
+        title: quizTitle,
+        quize_level: quizLevel
+      }
+    })
 
-    setLoading(true);
-    try {
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      showNotification('Quiz added successfully');
-      // Reset form
-      setQuizTitle('');
-      setQuestions([{
-        question: '',
-        options: ['', '', '', ''],
-        correctAnswer: ''
-      }]);
-    } catch (error) {
-      showNotification('Error adding quiz', 'error');
-    } finally {
-      setLoading(false);
+    const response = await apiService.course.uploadQuizInBulk(questionData, selectedCourse)
+    if (response.status) {
+      toast.success("Quizz Uploaded Successfully")
+    } else {
+      toast.error(response.error)
     }
+
+    console.log("questionData>>>>> ", questionData, selectedCourse)
+    // setLoading(true);
+    // try {
+    //   // Simulate API call
+    //   await new Promise(resolve => setTimeout(resolve, 1000));
+
+    //   showNotification('Quiz added successfully');
+    //   // Reset form
+    //   setQuizTitle('');
+    //   setQuestions([{
+    //     question: '',
+    //     options: ['', '', '', ''],
+    //     answer: ''
+    //   }]);
+    // } catch (error) {
+    //   showNotification('Error adding quiz', 'error');
+    // } finally {
+    //   setLoading(false);
+    // }
   };
 
   return (
@@ -167,10 +191,10 @@ const Quiz = () => {
       {notification.show && (
         <Notification message={notification.message} type={notification.type} />
       )}
-      
+
       <div className="max-w-4xl mx-auto bg-white rounded-lg shadow-md p-6">
         <h2 className="text-2xl font-bold mb-6 text-[#020A47]">Add New Quiz</h2>
-        
+
         <form onSubmit={handleSubmit} className="space-y-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
@@ -291,8 +315,8 @@ const Quiz = () => {
                     Correct Answer
                   </label>
                   <select
-                    value={q.correctAnswer}
-                    onChange={(e) => updateQuestion(questionIndex, 'correctAnswer', e.target.value)}
+                    value={q.answer}
+                    onChange={(e) => updateQuestion(questionIndex, 'answer', e.target.value)}
                     className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#020A47] focus:border-[#020A47]"
                     required
                   >

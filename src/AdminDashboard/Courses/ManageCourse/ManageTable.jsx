@@ -8,6 +8,8 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import envConfig from '../../../utils/envConfig';
 import { authToken } from '../../../utils/constants';
+import apiService from '../../../api';
+import toast from 'react-hot-toast';
 
 
 const ManageTable = () => {
@@ -19,22 +21,12 @@ const ManageTable = () => {
 
 
   useEffect(() => {
-    const fetchCourse = async () => {
-      try {
-        const token = authToken
-        const response = await axios.get(`${envConfig.backendUrl}/courses/admin/get_course`, {
-          headers: {
-            "Authorization": `Bearer ${token}`
-          }
-        })
-        const dataResponse = response.data.data
-        setCourses(dataResponse)
-        console.log("Data >>>>>>>>>>>>>>>> ", dataResponse)
-      } catch (err) {
-        console.log("Error while fetching courses", err)
-      }
-    }
-    fetchCourse()
+    (async () => {
+      const response = await apiService.course.fetchCourse()
+      console.log("Response is >>>> ", response)
+      if (response.status) setCourses(response.data)
+      else toast.error(response.error)
+    })()
   }, [])
 
   const stats = {
@@ -214,7 +206,7 @@ const ManageTable = () => {
                   </span>
                 </td>
                 <td className="px-4 py-3">
-                  {course.pricing_type ==="free" ? (
+                  {course.pricing_type === "free" ? (
                     'Free'
                   ) : (
                     <div className='flex items-center gap-2'>
@@ -223,8 +215,8 @@ const ManageTable = () => {
                           <div> ₹ {course.price}</div>
                         ) : <div>{course.discount_price}</div>
                       }
-                     
-                      {course.discount_price !==0 && (
+
+                      {course.discount_price !== 0 && (
                         <span className="text-gray-400 line-through ml-2">
                           ₹ {course.price}
                         </span>

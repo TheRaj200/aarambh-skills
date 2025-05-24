@@ -53,7 +53,7 @@ export default function Login() {
         }
 
       } else {
-        setError(data.message || 'Something went wrong. Please try again.');
+        setError(data.error || 'Something went wrong. Please try again.');
       }
     } catch (error) {
       setError('An error occurred. Please try again.');
