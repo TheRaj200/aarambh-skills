@@ -17,13 +17,16 @@ const ManageTable = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const [openMenuId, setOpenMenuId] = useState(null);
+  const [showFilterMenu, setShowFilterMenu] = useState(false);
+  const [sortBy, setSortBy] = useState(null);
+  const [sortOrder, setSortOrder] = useState('asc');
   const itemsPerPage = 10;
 
 
   useEffect(() => {
     (async () => {
       const response = await apiService.course.fetchCourse()
-      console.log("Response is >>>> ", response)
+     
       if (response.status) setCourses(response.data)
       else toast.error(response.error)
     })()
@@ -37,10 +40,6 @@ const ManageTable = () => {
     paidCourses: 42
   };
 
-  const filteredCourses = courses.filter(course =>
-    course.title.toLowerCase().includes(searchQuery.toLowerCase())
-  );
-
   const handleSearch = (e) => {
     setSearchQuery(e.target.value);
     setCurrentPage(1);
@@ -48,13 +47,63 @@ const ManageTable = () => {
 
   const handleExport = () => {
     // Implement export functionality
-    console.log('Exporting data...');
+ 
   };
 
-  const handleFilter = () => {
-    // Implement filter functionality
-    console.log('Filtering data...');
+  const handleFilter = (e) => {
+    e.stopPropagation();
+    setShowFilterMenu(!showFilterMenu);
   };
+
+  const handleSort = (type) => {
+    if (sortBy === type) {
+      // Toggle sort order if clicking the same sort type
+      setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc');
+    } else {
+      // Set new sort type and default to ascending
+      setSortBy(type);
+      setSortOrder('asc');
+    }
+    setShowFilterMenu(false);
+  };
+
+  // Sort courses based on selected criteria
+  const sortedAndFilteredCourses = React.useMemo(() => {
+    let result = [...courses];
+    
+    // Apply search filter
+    if (searchQuery) {
+      result = result.filter(course =>
+        course.title.toLowerCase().includes(searchQuery.toLowerCase())
+      );
+    }
+
+    // Apply sorting
+    if (sortBy) {
+      result.sort((a, b) => {
+        let comparison = 0;
+        switch (sortBy) {
+          case 'id':
+            comparison = a.id - b.id;
+            break;
+          case 'alphabet':
+            comparison = a.title.localeCompare(b.title);
+            break;
+          case 'price':
+            comparison = (a.price || 0) - (b.price || 0);
+            break;
+          default:
+            return 0;
+        }
+        return sortOrder === 'asc' ? comparison : -comparison;
+      });
+    }
+
+    return result;
+  }, [courses, searchQuery, sortBy, sortOrder]);
+
+  // Update filteredCourses to use the new sortedAndFilteredCourses
+  const filteredCourses = sortedAndFilteredCourses;
 
   const handleOptionsClick = (courseId, e) => {
     e.stopPropagation();
@@ -69,7 +118,7 @@ const ManageTable = () => {
   }, []);
 
   const handleEditCourse = (courseId) => {
-    console.log('Edit course:', courseId);
+ 
     // Implement edit course functionality
     handleNavigation(`/admin/dashboard/courseedit?courseId=${courseId}`);
   };
@@ -84,9 +133,34 @@ const ManageTable = () => {
     );
   };
 
-  const handleDeleteCourse = (courseId) => {
-    console.log('Delete course:', courseId);
-    // Implement delete course functionality
+  const handleDeleteCourse = async (courseId) => {
+    try {
+      const token = localStorage.getItem('token');
+      if (!token) {
+        alert('Please login to delete courses');
+        return;
+      }
+
+      const response = await fetch(`${envConfig.backendUrl}/courses/admin/delete_course/${courseId}`, {
+        method: 'PATCH',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        }
+      });
+
+      const data = await response.json();
+      
+      if (response.ok && data.status) {
+        // Refresh the course list after successful deletion
+        window.location.reload();
+      } else {
+        alert(data.message || 'Failed to delete course');
+      }
+    } catch (error) {
+      console.error('Error deleting course:', error);
+      alert('An error occurred while deleting the course');
+    }
   };
   let handleNavigation = useNavigate();
 
@@ -152,12 +226,58 @@ const ManageTable = () => {
           >
             <FaFileExport /> Export
           </button>
-          <button
-            onClick={handleFilter}
-            className="flex items-center gap-2 px-4 py-2 border rounded-lg hover:bg-gray-50"
-          >
-            <FiFilter /> Filter
-          </button>
+          <div className="relative">
+            <button
+              onClick={handleFilter}
+              className="flex items-center gap-2 px-4 py-2 border rounded-lg hover:bg-gray-50"
+            >
+              <FiFilter /> Filter
+              {sortBy && (
+                <span className="text-xs text-gray-500">
+                  ({sortBy} - {sortOrder})
+                </span>
+              )}
+            </button>
+            {showFilterMenu && (
+              <div className="absolute left-0 mt-2 w-48 bg-white rounded-lg shadow-lg z-50 border">
+                <div className="py-1">
+                  <button
+                    onClick={() => handleSort('id')}
+                    className="w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center justify-between"
+                  >
+                    <span>Sort by ID</span>
+                    {sortBy === 'id' && (
+                      <span className="text-xs text-gray-500">
+                        {sortOrder === 'asc' ? '↑' : '↓'}
+                      </span>
+                    )}
+                  </button>
+                  <button
+                    onClick={() => handleSort('alphabet')}
+                    className="w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center justify-between"
+                  >
+                    <span>Sort by Name</span>
+                    {sortBy === 'alphabet' && (
+                      <span className="text-xs text-gray-500">
+                        {sortOrder === 'asc' ? '↑' : '↓'}
+                      </span>
+                    )}
+                  </button>
+                  <button
+                    onClick={() => handleSort('price')}
+                    className="w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center justify-between"
+                  >
+                    <span>Sort by Price</span>
+                    {sortBy === 'price' && (
+                      <span className="text-xs text-gray-500">
+                        {sortOrder === 'asc' ? '↑' : '↓'}
+                      </span>
+                    )}
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
         </div>
         <div className="w-full sm:w-auto">
           <input
@@ -171,7 +291,7 @@ const ManageTable = () => {
       </div>
 
       {/* Table */}
-      <div className="overflow-x-auto bg-white rounded-lg shadow">
+      <div className="bg-white rounded-lg shadow">
         <table className="w-full">
           <thead className="bg-gray-50">
             <tr>

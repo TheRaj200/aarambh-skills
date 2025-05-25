@@ -2,8 +2,13 @@ import React, { useState, useEffect } from 'react';
 import { FaRegImage } from 'react-icons/fa';
 import { toast } from 'react-hot-toast';
 import envConfig from '../../utils/envConfig';
+import { useParams } from 'react-router-dom';
+import Nav from '../Common/Nav';
+import Bannertemp from '../../components/AboutPage/Bannertemp';
+import Sidebar from '../Common/Sidebar';
 
-const AddBundle = () => {
+const EditBundle = () => {
+  const { id } = useParams(); // Get bundle ID from URL params
   const [form, setForm] = useState({
     title: '',
     description: '',
@@ -23,6 +28,69 @@ const AddBundle = () => {
   const [searchResults, setSearchResults] = useState([]);
   const [loading, setLoading] = useState(true);
 
+  // Fetch bundle data
+  useEffect(() => {
+    const fetchBundleData = async () => {
+      try {
+        const token = localStorage.getItem('token');
+        if (!token) {
+          toast.error('Please login to view bundle');
+          return;
+        }
+
+        const response = await fetch(`${envConfig.backendUrl}/courses/admin/get_bundles`, {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          }
+        });
+
+        const data = await response.json();
+        console.log('All bundles:', data); // Debug log
+        console.log('Looking for bundle ID:', id); // Debug log
+
+        if (response.ok && data.status) {
+          // Find the specific bundle by ID
+          const bundle = data.data.find(b => b.id === parseInt(id));
+          console.log('Found bundle:', bundle); // Debug log
+
+          if (bundle) {
+            // Pre-fill the form with bundle data
+            setForm({
+              title: bundle.title || '',
+              description: bundle.description || '',
+              courses: Array.isArray(bundle.courses) ? bundle.courses.map(c => c.id) : [],
+              price: bundle.price ? bundle.price.toString() : '',
+              image: null,
+              bundle_data: {
+                duration: bundle.bundle_data?.duration || '',
+                type: bundle.bundle_data?.type || 'Online'
+              },
+              credits_applied: bundle.credits_applied || true
+            });
+
+            // Set image preview if bundle has an image
+            if (bundle.dundle_image) {
+              setImagePreview(bundle.dundle_image);
+            }
+          } else {
+            toast.error('Bundle not found');
+          }
+        } else {
+          toast.error(data.message || 'Failed to fetch bundle');
+        }
+      } catch (error) {
+        console.error('Error fetching bundle:', error);
+        toast.error('Error fetching bundle data');
+      }
+    };
+
+    if (id) {
+      fetchBundleData();
+    }
+  }, [id]);
+
+  // Fetch available courses
   useEffect(() => {
     const fetchCourses = async () => {
       try {
@@ -117,7 +185,7 @@ const AddBundle = () => {
 
     const { title, description, price, bundle_data, credits_applied, image, courses } = form;
 
-    if (!title || !description || !price || !bundle_data.duration || !image || courses.length === 0) {
+    if (!title || !description || !price || !bundle_data.duration || courses.length === 0) {
       toast.error('Please fill all required fields');
       return;
     }
@@ -138,80 +206,79 @@ const AddBundle = () => {
     }
 
     try {
-      // First convert the image to base64
-      const reader = new FileReader();
-      reader.readAsDataURL(image);
-      reader.onloadend = async () => {
-        const base64Image = reader.result;
+      const bundleData = {
+        title: title,
+        description: description,
+        price: parseInt(price),
+        bundle_data: {
+          duration: bundle_data.duration,
+          type: bundle_data.type
+        },
+        credits_applied: credits_applied,
+        courses: validCourses.map(id => parseInt(id))
+      };
 
-        // Prepare data in the exact format required
-        const bundleData = {
-          title: title,
-          description: description,
-          dundle_image: base64Image,
-          price: parseInt(price),
-          bundle_data: {
-            duration: bundle_data.duration,
-            type: bundle_data.type
-          },
-          credits_applied: credits_applied,
-          courses: validCourses.map(id => parseInt(id))
+      // Only include image if it was changed
+      if (image) {
+        const reader = new FileReader();
+        reader.readAsDataURL(image);
+        reader.onloadend = async () => {
+          bundleData.dundle_image = reader.result;
+          await updateBundle(bundleData);
         };
-
-        console.log('Sending bundle data:', bundleData);
-
-        const token = localStorage.getItem('token');
-        if (!token) {
-          toast.error('Please login to add bundle');
-          return;
-        }
-
-        const response = await fetch(`${envConfig.backendUrl}/courses/admin/create_bundle`, {
-          method: 'POST',
-          headers: {
-            'Authorization': `Bearer ${token}`,
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify(bundleData)
-        });
-
-        const data = await response.json();
-
-        if (response.ok && data.status) {
-          toast.success('Bundle added successfully!');
-          setForm({
-            title: '',
-            description: '',
-            courses: [],
-            price: '',
-            image: null,
-            bundle_data: { duration: '', type: 'Online' },
-            credits_applied: true
-          });
-          setImagePreview(null);
-        } else {
-          if (data.courses) {
-            // Handle course-specific errors
-            const courseErrors = data.courses.map(err => err.msg).join(', ');
-            toast.error(`Course errors: ${courseErrors}`);
-          } else {
-            toast.error(data.message || 'Failed to add bundle');
-          }
-        }
-      };
-
-      reader.onerror = () => {
-        toast.error('Error processing image');
-      };
+      } else {
+        await updateBundle(bundleData);
+      }
     } catch (error) {
       toast.error('Something went wrong: ' + error.message);
     }
   };
 
+  const updateBundle = async (bundleData) => {
+    try {
+      const token = localStorage.getItem('token');
+      if (!token) {
+        toast.error('Please login to edit bundle');
+        return;
+      }
+
+      const response = await fetch(`${envConfig.backendUrl}/courses/admin/update_bundle/${id}`, {
+        method: 'PUT',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(bundleData)
+      });
+
+      const data = await response.json();
+
+      if (response.ok && data.status) {
+        toast.success('Bundle updated successfully!');
+      } else {
+        if (data.courses) {
+          const courseErrors = data.courses.map(err => err.msg).join(', ');
+          toast.error(`Course errors: ${courseErrors}`);
+        } else {
+          toast.error(data.message || 'Failed to update bundle');
+        }
+      }
+    } catch (error) {
+      toast.error('Error updating bundle: ' + error.message);
+    }
+  };
+
   return (
-    <div className="w-full flex justify-center items-center">
+    <div className=' bg-gray-50'>
+    <Nav/>
+    <Bannertemp value={"Dashboard"} />
+    <div className='flex flex-col lg:flex-row gap-6 p-4 lg:p-6'>
+      <div className='lg:w-72'>
+        <Sidebar col={"bg-purple-100 hover:bg-purple-100 text-[#020A47] font-bold"}/>
+      </div>
+      <div className="w-full flex justify-center items-start">
       <div className="bg-white rounded-lg shadow-lg p-8 w-full max-w-lg mt-4">
-        <h2 className="text-2xl font-bold mb-6 text-[#020A47]">Add New Bundle</h2>
+        <h2 className="text-2xl font-bold mb-6 text-[#020A47]">Edit Bundle</h2>
         <form onSubmit={handleSubmit} className="flex flex-col gap-5">
 
           {/* Image Upload */}
@@ -272,7 +339,7 @@ const AddBundle = () => {
                     className="px-3 py-2 hover:bg-purple-100 cursor-pointer"
                     onClick={() => handleAddSearchedCourse(course)}
                   >
-                    {course.title}
+                    {course.title} 
                   </div>
                 ))}
               </div>
@@ -304,12 +371,14 @@ const AddBundle = () => {
             type="submit"
             className="bg-[#020a47dc] hover:bg-[#020A47] text-white px-4 py-2 rounded mt-2 font-semibold"
           >
-            Add Bundle
+            Edit Bundle
           </button>
         </form>
       </div>
     </div>
+    </div>
+</div>
   );
 };
 
-export default AddBundle;
+export default EditBundle;
