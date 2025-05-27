@@ -6,6 +6,7 @@ import { MdError } from "react-icons/md";
 import * as XLSX from 'xlsx';
 import apiService from '../../../api';
 import toast from 'react-hot-toast';
+import { useNavigate } from 'react-router-dom';
 
 const Notification = ({ message, type }) => (
   <div
@@ -36,7 +37,7 @@ const Quiz = () => {
     { id: 4, title: "Machine Learning" },
     { id: 5, title: "Mobile App Development" }
   ]);
-
+  const navigate = useNavigate()
   const [selectedCourse, setSelectedCourse] = useState('');
   const [quizTitle, setQuizTitle] = useState('');
   const [quizLevel, setQuizLevel] = useState('low');
@@ -149,6 +150,7 @@ const Quiz = () => {
       showNotification('Please fill all required fields', 'error');
       return;
     }
+    navigate("/admin/dashboard/manageCourse")
     console.log("Question is ", questions)
     setLoading(true);
     const questionData = questions.map((question) => {

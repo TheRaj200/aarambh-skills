@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { FaRegImage } from 'react-icons/fa';
 import { toast } from 'react-hot-toast';
 import envConfig from '../../utils/envConfig';
+import { useNavigate } from 'react-router-dom';
 
 const AddBundle = () => {
   const [form, setForm] = useState({
@@ -22,6 +23,7 @@ const AddBundle = () => {
   const [courseSearch, setCourseSearch] = useState('');
   const [searchResults, setSearchResults] = useState([]);
   const [loading, setLoading] = useState(true);
+  const navigate = useNavigate()
 
   useEffect(() => {
     const fetchCourses = async () => {
@@ -117,7 +119,7 @@ const AddBundle = () => {
 
     const { title, description, price, bundle_data, credits_applied, image, courses } = form;
 
-    if (!title || !description || !price || !bundle_data.duration || !image || courses.length === 0) {
+    if (!title || !description || !price || !bundle_data.duration || courses.length === 0) {
       toast.error('Please fill all required fields');
       return;
     }
@@ -138,74 +140,82 @@ const AddBundle = () => {
     }
 
     try {
-      // First convert the image to base64
-      const reader = new FileReader();
-      reader.readAsDataURL(image);
-      reader.onloadend = async () => {
-        const base64Image = reader.result;
-
-        // Prepare data in the exact format required
-        const bundleData = {
-          title: title,
-          description: description,
-          dundle_image: base64Image,
-          price: parseInt(price),
-          bundle_data: {
-            duration: bundle_data.duration,
-            type: bundle_data.type
-          },
-          credits_applied: credits_applied,
-          courses: validCourses.map(id => parseInt(id))
-        };
-
-        console.log('Sending bundle data:', bundleData);
-
-        const token = localStorage.getItem('token');
-        if (!token) {
-          toast.error('Please login to add bundle');
-          return;
-        }
-
-        const response = await fetch(`${envConfig.backendUrl}/courses/admin/create_bundle`, {
-          method: 'POST',
-          headers: {
-            'Authorization': `Bearer ${token}`,
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify(bundleData)
+      let base64Image;
+      
+      if (image) {
+        // If image is uploaded, convert it to base64
+        const reader = new FileReader();
+        reader.readAsDataURL(image);
+        await new Promise((resolve, reject) => {
+          reader.onloadend = () => {
+            base64Image = reader.result;
+            resolve();
+          };
+          reader.onerror = reject;
         });
+      } else {
+        // Use default image URL if no image is uploaded
+        base64Image = 'https://example.com/images/bundle.jpg';
+      }
 
-        const data = await response.json();
+      // Prepare data in the exact format required
+      const bundleData = {
+        title: title,
+        description: description,
+        dundle_image: base64Image,
+        price: parseInt(price),
+        bundle_data: {
+          duration: bundle_data.duration,
+          type: bundle_data.type
+        },
+        credits_applied: credits_applied,
+        courses: validCourses.map(id => parseInt(id))
+      };
 
-        if (response.ok && data.status) {
-          toast.success('Bundle added successfully!');
-          setForm({
-            title: '',
-            description: '',
-            courses: [],
-            price: '',
-            image: null,
-            bundle_data: { duration: '', type: 'Online' },
-            credits_applied: true
-          });
-          setImagePreview(null);
+      console.log('Sending bundle data:', bundleData);
+
+      const token = localStorage.getItem('token');
+      if (!token) {
+        toast.error('Please login to add bundle');
+        return;
+      }
+
+      const response = await fetch(`${envConfig.backendUrl}/courses/admin/create_bundle`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(bundleData)
+      });
+
+      const data = await response.json();
+
+      if (response.ok && data.status) {
+        toast.success('Bundle added successfully!');
+        setForm({
+          title: '',
+          description: '',
+          courses: [],
+          price: '',
+          image: null,
+          bundle_data: { duration: '', type: 'Online' },
+          credits_applied: true
+        });
+        setImagePreview(null);
+      } else {
+        if (data.courses) {
+          // Handle course-specific errors
+          const courseErrors = data.courses.map(err => err.msg).join(', ');
+          toast.error(`Course errors: ${courseErrors}`);
         } else {
-          if (data.courses) {
-            // Handle course-specific errors
-            const courseErrors = data.courses.map(err => err.msg).join(', ');
-            toast.error(`Course errors: ${courseErrors}`);
-          } else {
-            toast.error(data.message || 'Failed to add bundle');
-          }
+          toast.error(data.message || 'Failed to add bundle');
         }
-      };
-
-      reader.onerror = () => {
-        toast.error('Error processing image');
-      };
+      }
     } catch (error) {
       toast.error('Something went wrong: ' + error.message);
     }
+    navigate('/admin/dashboard/bundle/manage')
   };
 
   return (
