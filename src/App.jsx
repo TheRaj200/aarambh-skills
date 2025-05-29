@@ -62,6 +62,12 @@ import EditAdmin from './AdminDashboard/Users/Admin/EditAdmin.jsx';
 import AssignPermission from './AdminDashboard/Users/Admin/Assignpermission.jsx';
 import EditBundle from './AdminDashboard/CourseBundle/EditBundle.jsx';
 import PracticePage from './AdminDashboard/PracticePage/PracticePage.jsx';
+import AdminWishlist from './AdminDashboard/Wishlist/Wishlist.jsx';
+import PageBanner from './AdminDashboard/FrontCMS/PageBanner/PageBanner.jsx';
+import AboutPageContent from './AdminDashboard/FrontCMS/AboutPage/AboutPageContent.jsx';
+import Experts from './AdminDashboard/FrontCMS/Experts/Experts.jsx';
+import Partners from './AdminDashboard/FrontCMS/Partners/Partners.jsx';
+import FAQ from './AdminDashboard/FrontCMS/FAQ/FAQ.jsx'
 
 const App = () => {
   const [cartCount, setCartCount] = useState(0);
@@ -95,7 +101,7 @@ const App = () => {
             <Route path="/practice" element={<ProtectedRoute element={Practice} />} />
             <Route path="/quiz/:topicName" element={<QuizPage />} />
 
-            // Dashboard routes
+            {/* Dashboard routes */}
             <Route path="/chat" element={<Chat />} />
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/dashboard/practice" element={<DashboardPractice />} />
@@ -111,9 +117,7 @@ const App = () => {
             <Route path="/dashboard/support/ticket-details" element={<TicketDetails />} />
             <Route path="/dashboard/courses/:courseId" element={<CourseDetails />} />
 
-
-
-            // Admin Dashboard routes
+            {/* Admin Dashboard routes */}
             <Route path="/admin/dashboard" element={<AdminDashboard />} />
             <Route path="/admin/dashboard/category" element={<Category/>} />
             <Route path="/admin/dashboard/manageCourse" element={<ManageCourse/>} />
@@ -143,8 +147,12 @@ const App = () => {
             <Route path="/admin/dashboard/users/admin/edit" element={<EditAdmin />} />
             <Route path="/admin/dashboard/users/admin/assignpermission" element={<AssignPermission />} />
             <Route path="/admin/dashboard/practice" element={<PracticePage />} />
-
-
+            <Route path="/admin/dashboard/wishlist" element={<AdminWishlist />} />
+            <Route path="/admin/dashboard/front-cms/page-banner" element={<PageBanner />} />
+            <Route path="/admin/dashboard/front-cms/about-page-content" element={<AboutPageContent />} />
+            <Route path="/admin/dashboard/front-cms/Experts" element={<Experts />} />
+            <Route path="/admin/dashboard/front-cms/partners" element={<Partners />} />
+            <Route path="/admin/dashboard/front-cms/faq" element={<FAQ />} />
 
           </Routes>
 
