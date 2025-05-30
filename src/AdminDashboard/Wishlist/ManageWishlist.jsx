@@ -1,7 +1,4 @@
 import React, { useState } from 'react';
-import { FaFileExport } from 'react-icons/fa';
-import { FiFilter } from 'react-icons/fi';
-import { GoPlus } from 'react-icons/go';
 import { useNavigate } from 'react-router-dom';
 
 // Dummy data

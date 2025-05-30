@@ -264,6 +264,21 @@ const Sidebar = ({ col }) => {
                     <IoLogoWebComponent className="text-base" />
                     <span className="text-sm font-medium">FAQ</span>
                   </li>
+                  <li onClick={() => handleNavigation('/admin/dashboard/front-cms/WhyArambhSkills')}
+                    className={`flex items-center space-x-3 p-2 rounded-lg hover:bg-gray-100 cursor-pointer transition-colors ${location.pathname === '/admin/dashboard/front-cms/WhyArambhSkills' ? 'text-[#020A47]' : ''}`}>
+                    <IoLogoWebComponent className="text-base" />
+                    <span className="text-sm font-medium">WhyArambhSkills</span>
+                  </li>
+                  <li onClick={() => handleNavigation('/admin/dashboard/front-cms/testimonials')}
+                    className={`flex items-center space-x-3 p-2 rounded-lg hover:bg-gray-100 cursor-pointer transition-colors ${location.pathname === '/admin/dashboard/front-cms/testimonials' ? 'text-[#020A47]' : ''}`}>
+                    <IoLogoWebComponent className="text-base" />
+                    <span className="text-sm font-medium">Testimonials</span>
+                  </li>
+                  <li onClick={() => handleNavigation('/admin/dashboard/front-cms/Contact')}
+                    className={`flex items-center space-x-3 p-2 rounded-lg hover:bg-gray-100 cursor-pointer transition-colors ${location.pathname === '/admin/dashboard/front-cms/Contact' ? 'text-[#020A47]' : ''}`}>
+                    <IoLogoWebComponent className="text-base" />
+                    <span className="text-sm font-medium">Contact</span>
+                  </li>
                 </ul>
               )}
             </div>
@@ -274,21 +289,19 @@ const Sidebar = ({ col }) => {
               <span className="text-base font-medium">NewsLetter</span>
             </li>
 
-            <li onClick={() => handleNavigation('/admin/dashboard/settings')}
-              className={`flex items-center space-x-3 text-[#020A47] hover:bg-gray-100 p-3 rounded-lg cursor-pointer transition-colors ${location.pathname === '/admin/dashboard/settings' ? col : ''}`}>
-              <FaCog className="text-lg" />
-              <span className="text-base font-medium">Settings</span>
-            </li>
-
-
-
-
 
             <li onClick={() => handleNavigation('/admin/dashboard/certification')}
               className={`flex items-center space-x-3 text-[#020A47] hover:bg-gray-100 p-3 rounded-lg cursor-pointer transition-colors ${location.pathname === '/admin/dashboard/certification' ? col : ''}`}>
               <PiCertificateFill className="text-xl" />
               <span className="text-base font-medium">Certification</span>
             </li>
+            
+            <li onClick={() => handleNavigation('/admin/dashboard/settings')}
+              className={`flex items-center space-x-3 text-[#020A47] hover:bg-gray-100 p-3 rounded-lg cursor-pointer transition-colors ${location.pathname === '/admin/dashboard/settings' ? col : ''}`}>
+              <FaCog className="text-lg" />
+              <span className="text-base font-medium">Settings</span>
+            </li>
+
 
             <li onClick={() => handleNavigation('/')}
               className="flex items-center space-x-3 p-3 text-red-600 rounded-lg hover:bg-gray-100 cursor-pointer transition-colors">
